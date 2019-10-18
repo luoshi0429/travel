@@ -1,14 +1,14 @@
 module.exports = {
-  lintOnSave: 'error',
+  lintOnSave: 'default',
 
-  chainWebpack: config => {
-    const oneOfsMap = config.module.rule('scss').oneOfs.store;
-    oneOfsMap.forEach(item => {
-      item.use('sass-resources-loader').loader('sass-resources-loader').options({
-        resources: './src/styles/global.scss'
-      }).end();
-    });
-  },
+  // chainWebpack: config => {
+  //   const oneOfsMap = config.module.rule('scss').oneOfs.store;
+  //   oneOfsMap.forEach(item => {
+  //     item.use('sass-resources-loader').loader('sass-resources-loader').options({
+  //       resources: './src/styles/basic.scss'
+  //     }).end();
+  //   });
+  // },
 
   devServer: {
     port: 15008,

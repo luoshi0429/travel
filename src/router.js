@@ -9,7 +9,24 @@ const router = new Router({
     {
       path: '/',
       name: 'home',
-      component: () => import('@/pages/home')
+      component: () => import('@/components/layout/tabbar-layout'),
+      children: [
+        {
+          path: '',
+          meta: {},
+          component: () => import('@/pages/home')
+        },
+        {
+          path: 'attention',
+          meta: {},
+          component: () => import('@/pages/attention')
+        },
+        {
+          path: 'my',
+          meta: {},
+          component: () => import('@/pages/my')
+        }
+      ]
     }
   ]
 });
