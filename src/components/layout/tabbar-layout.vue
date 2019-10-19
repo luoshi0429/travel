@@ -39,6 +39,10 @@ export default {
 <style lang="scss" scoped>
 .l-main-page {
   height: 100%;
+}
+
+.l-tabbar-layout {
+  height: 100%;
   padding-bottom: 48px;
 }
 

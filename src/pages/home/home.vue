@@ -4,7 +4,7 @@
       <div></div>
       <div class="c-home-nav__right">
         <div class="c-home-nav__search"><i class="c-icon iconfont icon-sousuo1"></i>搜索</div>
-        <div class="c-home-nav__location">广州<i class="c-icon iconfont icon-icon-test2"></i></div>
+        <router-link to="/city" class="c-home-nav__location">广州<i class="c-icon iconfont icon-icon-test2"></i></router-link>
       </div>
     </div>
     <div class="c-home-main">
@@ -12,7 +12,12 @@
       <div class="c-home-"></div>
       <div class="c-home-"></div>
       <div class="c-home-product__list">
-        <product-item v-for="product in productList" :key="product.id" :product="product" />
+        <product-item
+          @click.native="tapProduct(product)"
+          v-for="product in productList"
+          :key="product.id"
+          :product="product"
+        />
       </div>
     </div>
   </div>
@@ -40,6 +45,10 @@ export default {
           console.info(r);
           this.productList = r.result.rows;
         });
+    },
+    tapProduct(product) {
+      // this.$router.push(`/detail/${product.id}`);
+      this.$router.push({ name: 'detail', params: { id: product.id } });
     }
   }
 };
@@ -82,6 +91,7 @@ export default {
     }
   }
   &__location {
+    color: #333;
     margin-left: 12px;
   }
 }

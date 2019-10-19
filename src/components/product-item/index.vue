@@ -3,8 +3,8 @@
     <div class="c-product-item__top">
       <img :src="product.img_main || product.img_main_small" />
       <span class="c-product-item__top__sale">已售{{ product.saled_num }}</span>
-      <div class="c-product-item__top__countdown">
-        距结束仅剩<span></span>天<span></span>:<span></span>:<span></span>
+      <div class="c-product-item__top__countdown" v-if="product.end_time">
+        距结束仅剩<span>{{ leftInfo.day }}</span>天<span>{{ leftInfo.hour }}</span>:<span>{{ leftInfo.minute }}</span>:<span>{{ leftInfo.second }}</span>
       </div>
     </div>
     <div class="c-product-item__bottom">
@@ -28,15 +28,60 @@ export default {
     }
   },
 
+  watch: {
+    product: {
+      handler(val) {
+        console.info(val);
+        if (!val.end_time) return;
+        const endDate = new Date(val.end_time).getTime();
+        if (this.countTimer) {
+          clearInterval(this.countTimer);
+          this.countTimer = null;
+        }
+        this.countTimer = setInterval(() => {
+          const now = Date.now();
+          const leftSec = (endDate - now) / 1000;
+          if (leftSec <= 0) {
+            clearInterval(this.countTimer);
+            this.countTimer = null;
+            this.buyEnd = true;
+            return;
+          }
+          const day = this.appendZero(Math.floor(leftSec / 60 / 60 / 60 % 60));
+          this.leftInfo = {
+            day: day > 99 ? '99+' : day,
+            hour: Math.floor(leftSec / 60 / 60 % 60),
+            minute: this.appendZero(Math.floor(leftSec / 60 % 60)),
+            second: this.appendZero(Math.floor(leftSec % 60))
+          };
+        }, 1000);
+      },
+      deep: true,
+      immediate: true
+    }
+  },
+
+  data() {
+    return {
+      buyEnd: false,
+      leftInfo: {}
+    };
+  },
+
   methods: {
     tapPoster() {
       this.$emit('tapPoster', this.product.img_poster);
+    },
+    appendZero(num) {
+      return num < 10 ? ('0' + num) : num;
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
+@import '../../styles/common.scss';
+
 .c-product-item {
   border: 1px solid #eee;
   padding-bottom: 10px;
@@ -76,7 +121,12 @@ export default {
     background: rgba(0, 0, 0, 0.5);
     span {
       display: inline-block;
-      padding: 3px 2px;
+      line-height: 16px;
+      width: 22px;
+      text-align: center;
+      margin: 0 3px;
+      background: $main_color;
+      border-radius: 2px;
     }
   }
 }
@@ -90,15 +140,15 @@ export default {
   &__price {
     display: flex;
     justify-content: space-between;
-    color: #d25226;
+    color: $main_color;
     p {
       span {
         font-size: 22px;
       }
     }
     .btn {
-      color: #d25226;
-      border: 1px solid #d25226;;
+      color: $main_color;
+      border: 1px solid $main_color;
       font-size: 14px;
       padding: 0 18px;
       height: 24px;

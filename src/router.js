@@ -14,7 +14,7 @@ const router = new Router({
         {
           path: '',
           meta: {},
-          component: () => import('@/pages/home')
+          component: () => import('@/pages/home/home')
         },
         {
           path: 'attention',
@@ -27,6 +27,25 @@ const router = new Router({
           component: () => import('@/pages/my')
         }
       ]
+    },
+    {
+      path: '/city',
+      component: () => import('@/pages/city/city')
+    },
+    {
+      path: '/detail/:id',
+      name: 'detail',
+      component: () => import('@/pages/detail/detail')
+    },
+    {
+      path: '/pay/:id',
+      name: 'pay',
+      component: () => import('@/pages/pay/pay')
+    },
+    {
+      path: '/tag',
+      name: 'tag',
+      component: () => import('@/pages/tag/tag')
     }
   ]
 });
