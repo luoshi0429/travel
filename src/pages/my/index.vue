@@ -1,7 +1,7 @@
 <template>
   <div class="p-my">
     <div class="p-my-header">
-      <img src="../../assets/default-avatar.png" />
+      <img src="../../assets/images/default-avatar.png" />
       <p>张三</p>
     </div>
     <div class="p-my-cells">
@@ -65,7 +65,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
+  padding: 12px 10px;
   border-bottom: 1px solid #eee;
   &:last-of-type {
     border-bottom: none;

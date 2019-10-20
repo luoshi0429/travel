@@ -8,21 +8,42 @@
       <div class="p-detail-top">
         <div class="p-detail-carousel"></div>
         <div class="p-detail-product">
-          <h1>【长隆】1票玩2远~</h1>
-          <p class="price">¥<span>129</span></p>
-          <p class="sale"><span>已售：6029</span><span>库存：412</span></p>
+          <!-- 图片轮播图预留位置 -->
+          <div class="p-detail-img-list"><img style="width: 100%;" :src="detail.img_main" />图片轮播图预留位置</div>
+          <div class="p-detail-product__info">
+            <h1>{{ detail.name }}</h1>
+            <p class="price">¥<span>-</span></p>
+            <!-- 所有规格的库存 -->
+            <p class="sale"><span>已售：{{ detail.saled_num }}</span><span>库存：{{ detail.quantity }}</span></p>
+          </div>
         </div>
         <div class="p-detail-location">
-          <div><i class="iconfont icon-location1"></i> 广东省广州市番禺广州长隆欢乐世界</div>
+          <div><i class="iconfont icon-location1"></i> <span>{{ detail.product_addr }}</span></div>
           <i class="iconfont icon-icon-test3"></i>
         </div>
         <div class="p-detail-sku">
           <div class="p-detail-sku__left">选择规格</div>
-          <div class="p-detail-sku__right"></div>
+          <div class="p-detail-sku__right">
+            <p class="p-detail-sku__right__text">{{ detail.skugrups[0].text }}：</p>
+            <div class="p-detail-sku__right__skus">
+              <span class="p-detail-sku__right__sku" v-for="(sku, index) in detail.skugrups[0].skus" :key="index">{{ sku.sku_text }}</span>
+            </div>
+          </div>
         </div>
       </div>
-      <div v-if="showTab === 0" class="p-detail-section p-detail-info">产品详情</div>
-      <div v-if="showTab === 1" class="p-detail-section p-detail-instruction">使用说明</div>
+      <div v-if="showTab === 0" class="p-detail-section p-detail-info" v-html="detail.detailHtml"></div>
+      <div v-if="showTab === 1" class="p-detail-section p-detail-instruction">
+        <div class="p-detail-instruction-item">
+          <h2>产品</h2>
+          <p>{{ detail.name }}</p>
+        </div>
+        <div class="p-detail-instruction-item">
+          <h2>规格</h2>
+          <template v-if="detail.skugrups.length">
+            <p v-for="(sku, index) in detail.skugrups[0].skus" :key="index">{{ sku.sku_text }}</p>
+          </template>
+        </div>
+      </div>
     </div>
     <div class="p-detail-buy-section">
       <div class="p-detail-icon-btn" @click="tapHome"><i class="iconfont icon-shouye"></i><p>首页</p></div>
@@ -39,12 +60,13 @@ import { getProductDetail, getProductSku } from '@/api';
 export default {
   data() {
     return {
-      detail: {},
-      showTab: 0
+      detail: { skugrups: [] },
+      showTab: 0,
+      skuIndex: 0
     };
   },
   mounted() {
-    // this.requestDetail();
+    this.requestDetail();
   },
   methods: {
     requestDetail() {
@@ -52,6 +74,7 @@ export default {
       getProductDetail(id)
         .then(r => {
           console.log(r);
+          this.detail = r.result;
         }).catch(err => {
           console.error(err);
         });
@@ -115,6 +138,10 @@ export default {
   }
 }
 
+.p-detail-img-list {
+  height: 250px;
+}
+
 .p-detail-buy-section {
   position: fixed;
   left: 0;
@@ -160,8 +187,11 @@ export default {
 }
 
 .p-detail-product {
-  padding: 10px 15px 20px;
+  // padding: 10px 15px 20px;
   border-bottom: 1px solid #eee;
+  &__info {
+    padding: 10px 15px 20px;
+  }
   h1 {
     font-size: 16px;
     margin-bottom: 15px;
@@ -186,6 +216,14 @@ export default {
   justify-content: space-between;
   .iconfont {
     color: #777;
+    vertical-align: middle;
+  }
+  span {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 16px;
+    margin-left: 3px;
+    font-size: 13px;
   }
 }
 
@@ -204,6 +242,44 @@ export default {
   }
   &__right {
     flex: 1;
+  }
+}
+
+.p-detail-sku__right__text {
+  color: #333;
+  margin-bottom: 8px;
+}
+// .p-detail-sku__right__skus {
+
+// }
+.p-detail-sku__right__sku {
+  display: inline-block;
+  border: 1px solid $main_color;
+  border-radius: 3px;
+  margin-right: 6px;
+  margin-bottom: 6px;
+  color: $main_color;
+  padding: 4px 6px;
+  background: rgba(252, 109, 69, 0.15);
+}
+
+.p-detail-instruction-item {
+  font-size: 14px;
+  color: #777;
+  border-bottom: 1xp dashed #eee;
+  margin-bottom: 10px;
+  h2 {
+    font-size: 16px;
+    color: #000;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  p {
+    padding-left: 1em;
+    line-height: 20px;
+  }
+  &:last-of-type {
+    border-bottom: none;
   }
 }
 </style>

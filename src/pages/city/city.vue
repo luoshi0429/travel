@@ -2,7 +2,7 @@
   <div class="p-city">
     <div class="p-city-input">
       <i class="iconfont icon-sousuo1"></i>
-      <input placeholder="城市名" />
+      <input placeholder="城市名" @input="handleSearchCity" />
     </div>
     <div class="p-city-panel">
       <div class="p-city-current">
@@ -11,12 +11,19 @@
       <div class="p-city-top">
         <div class="p-city-location">
           <p>当前定位/最近访问城市</p>
-          <p class="p-city-item"><i class="iconfont icon-location1"></i> <span>{{ currentCity.name }}</span></p>
+          <p class="p-city-item" @click="tapCity(city)"><i class="iconfont icon-location1"></i> <span>{{ currentCity.name }}</span></p>
         </div>
         <div class="p-city-hot">
           <p>热门城市</p>
           <div class="p-city-hot__list">
-            <span v-for="hot in hotCities" :key="hot.name" class="p-city-item">{{ hot.name }}</span>
+            <div
+              class="p-city-hot__item"
+              v-for="hot in hotCities"
+              :key="hot.name"
+              @click="tapCity(city)"
+            >
+              <span class="p-city-item">{{ hot.name }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -28,30 +35,46 @@
           :id="letteyCity.letter"
         >
           <h1>{{ letteyCity.letter }}</h1>
-          <div v-for="city in letteyCity.cities" :key="city.name" class="p-city-letter-cell">{{ city.name }}</div>
+          <div
+            v-for="city in letteyCity.cities"
+            :key="city.name"
+            class="p-city-letter-cell"
+            @click="tapCity(city)"
+          >{{ city.name }}</div>
         </div>
       </div>
     </div>
     <div class="p-city-letter-list">
       <a
-        v-for="city in letterCities"
+        v-for="(city) in letterCities"
         class="p-city-letter"
-        :href="'#'+city.letter"
         :key="city.letter"
+        @click="tapLetter(city.letter)"
       >{{ city.letter }}</a>
     </div>
+    <div class="c-search-panel" v-if="searchCities.length">
+      <div class="c-search-panel__inner">
+        <p class="c-search-panel__title">搜索结果</p>
+        <div class="c-search-list">
+          <p class="c-search-row" v-for="(city, index) in searchCities" :key="index">{{ city.name }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="c-letter-toast" v-if="currentLetter.length">{{ currentLetter }}</div>
   </div>
 </template>
 
 <script>
+import cities from '@/assets/cities';
+
 export default {
   data() {
     return {
       currentCity: { name: '广州' },
       hotCities: [
-        { name: '北京' },
-        { name: '上海' },
-        { name: '广州' },
+        { name: '北京', cityId: '' },
+        { name: '上海', cityId: '' },
+        { name: '广州', cityId: '' },
         { name: '成都' },
         { name: '重庆' },
         { name: '佛山' },
@@ -59,82 +82,59 @@ export default {
         { name: '珠海' },
         { name: '东莞' }
       ],
-      letterCities: [
-        {
-          letter: 'A',
-          cities: [
-            { name: '安庆' },
-            { name: '安顺' }
-          ]
-        },
-        {
-          letter: 'B',
-          cities: [
-            { name: '宝鸡' },
-            { name: '北海' },
-            { name: '北京' },
-            { name: '保定' }
-          ]
-        },
-        {
-          letter: 'C',
-          cities: [
-            { name: '赤峰' },
-            { name: '长春' },
-            { name: '潮州' },
-            { name: '成都' },
-            { name: '重庆' },
-            { name: '长沙' },
-            { name: '郴州' },
-            { name: '常德' }
-          ]
-        },
-        {
-          letter: 'D',
-          cities: [
-            { name: '大理' },
-            { name: '大连' },
-            { name: '东莞' }
-          ]
-        },
-        {
-          letter: 'F',
-          cities: [
-            { name: '阜阳' },
-            { name: '福州' },
-            { name: '佛山' }
-          ]
-        },
-        {
-          letter: 'G',
-          cities: [
-            { name: '广州' },
-            { name: '大连' },
-            { name: '东莞' }
-          ]
-        },
-        {
-          letter: 'H',
-          cities: [
-            { name: '合肥' },
-            { name: '海口' },
-            { name: '杭州' },
-            { name: '哈尔滨' },
-            { name: '黄石' },
-            { name: '衡阳' }
-          ]
-        },
-        {
-          letter: 'J',
-          cities: [
-            { name: '嘉兴' },
-            { name: '金华' },
-            { name: '荆州' },
-            { name: '济南' }
-          ]
-        }
-      ]
+      letterCities: cities,
+      currentLetter: '',
+      searchCities: []
     };
+  },
+  methods: {
+    tapLetter(letter) {
+      const $ele = document.querySelector('#' + letter);
+      console.log($ele.offsetTop, $ele);
+      window.scrollTo(0, $ele.offsetTop - 50);
+      this.currentLetter = letter;
+      if (this.letterTimer) {
+        clearTimeout(this.letterTimer);
+        this.letterTimer = null;
+      }
+      this.letterTimer = setTimeout(() => {
+        this.currentLetter = '';
+      }, 1000);
+    },
+    tapCity(city) {
+
+    },
+    handleSearchCity(e) {
+      const val = e.target.value;
+
+      if (this.searchTimer) {
+        clearTimeout(this.searchTimer);
+        this.searchTimer = null;
+      }
+
+      if (!val) {
+        this.searchCities = [];
+        return;
+      }
+      this.searchTimer = setTimeout(() => {
+        const resultCities = [];
+        // 搜索cities
+        console.log(cities.length);
+        for (let i = 0; i < cities.length; i++) {
+          const letterCity = cities[i];
+          const inLetterCities = letterCity.cities;
+          console.log(inLetterCities.length);
+          for (let j = 0; j < inLetterCities.length; j++) {
+            const city = inLetterCities[j];
+            const { name, pingying } = city;
+            if (name.indexOf(val) === 0 || pingying.indexOf(val) === 0) {
+              resultCities.push(city);
+            }
+          }
+        }
+        this.searchCities = resultCities;
+      }, 600);
+    }
   }
 };
 </script>
@@ -145,11 +145,23 @@ export default {
   font-size: 16px;
 }
 
+.c-letter-toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 20px;
+}
+
 .p-city-input {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
+  z-index: 99;
   height: 50px;
   background: #fff;
   border-bottom: 1px solid #eee;
@@ -185,7 +197,7 @@ export default {
 .p-city-top {
   background: #f2f2f2;
   color: #777;
-  padding: 20px 15px;
+  padding: 20px 15px 0;
 }
 .p-city-location {
   .p-city-item {
@@ -193,6 +205,7 @@ export default {
     color: #fff;
     position: relative;
     padding: 0 18px 0 26px;
+    margin-top: 15px;
     .iconfont {
       color: #fff;
       position: absolute;
@@ -207,11 +220,13 @@ export default {
   display: inline-block;
   color: #333;
   padding: 0 22px;
-  margin: 15px 0;
+  // margin: 15px 0;
+  margin-bottom: 15px;
   height: 26px;
   line-height: 26px;
   border-radius: 12px;
   background: #fff;
+  // margin-right: 10px;
 }
 
 .p-city-item-current {
@@ -225,6 +240,12 @@ export default {
 }
 
 .p-city-hot__list {
+  margin-top: 15px;
+}
+.p-city-hot__item {
+  display: inline-block;
+  width: 25%;
+  text-align: center;
 }
 
 .p-city-letter-list {
@@ -252,6 +273,40 @@ export default {
 .p-city-letter-cell {
   border-bottom: 1px solid #eee;
   padding: 15px;
+  &:last-of-type {
+    border-bottom: none;
+  }
+}
+
+.c-search-panel {
+  position: fixed;
+  top: 50px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 99;
+  background: rgba(0, 0, 0, 0.5);
+  &__inner {
+    height: 100%;
+  }
+  &__title {
+    background: #fff;
+    color: #999;
+    // font-weight: bold;
+    padding: 14px;
+    font-size: 16px;
+  }
+}
+.c-search-list {
+  background: #fff;
+  padding: 0 14px;
+  max-height: 70%;
+  overflow-y: auto;
+  font-size: 14px;
+}
+.c-search-row {
+  border-bottom: 1px solid #eee;
+  padding: 12px;
   &:last-of-type {
     border-bottom: none;
   }

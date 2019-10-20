@@ -23,15 +23,10 @@ export default {
     return {
       tabbars: [
         { title: '首页', ic: 'icon-shouye', path: '/' },
-        { title: '关注', ic: 'icon-aixin', path: '/attention' },
+        // { title: '关注', ic: 'icon-aixin', path: '/attention' },
         { title: '我的', ic: 'icon-wode', path: '/my' }
       ]
     };
-  },
-  watch: {
-    $route(to) {
-      console.info(to);
-    }
   }
 };
 </script>

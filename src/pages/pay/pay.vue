@@ -54,11 +54,28 @@
 </template>
 
 <script>
+import { getProductDetail } from '@/api';
+
 export default {
   data() {
     return {
       buyCount: 1
     };
+  },
+  mounted() {
+    this.requestDetail();
+  },
+  methods: {
+    requestDetail() {
+      const id = this.$route.params.id;
+      getProductDetail(id)
+        .then(r => {
+          console.log(r);
+          this.detail = r.result;
+        }).catch(err => {
+          console.error(err);
+        });
+    }
   }
 };
 </script>

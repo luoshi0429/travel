@@ -128,6 +128,7 @@ module.exports = {
   },
   globals: {
     'chrome': true,
-    'wx': true
+    'wx': true,
+    qq: true
   }
 };

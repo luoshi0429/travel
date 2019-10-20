@@ -50,7 +50,7 @@ export default {
           const day = this.appendZero(Math.floor(leftSec / 60 / 60 / 60 % 60));
           this.leftInfo = {
             day: day > 99 ? '99+' : day,
-            hour: Math.floor(leftSec / 60 / 60 % 60),
+            hour: this.appendZero(Math.floor(leftSec / 60 / 60 % 60)),
             minute: this.appendZero(Math.floor(leftSec / 60 % 60)),
             second: this.appendZero(Math.floor(leftSec % 60))
           };
