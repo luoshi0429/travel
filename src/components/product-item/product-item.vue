@@ -31,7 +31,6 @@ export default {
   watch: {
     product: {
       handler(val) {
-        console.info(val);
         if (!val.end_time) return;
         const endDate = new Date(val.end_time).getTime();
         if (this.countTimer) {

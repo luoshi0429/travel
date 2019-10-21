@@ -27,6 +27,13 @@
       "unicode_decimal": 58940
     },
     {
+      "icon_id": "560092",
+      "name": "close",
+      "font_class": "close",
+      "unicode": "e609",
+      "unicode_decimal": 58889
+    },
+    {
       "icon_id": "578988",
       "name": "搜索",
       "font_class": "sousuo-copy",
@@ -67,6 +74,13 @@
       "font_class": "plus1",
       "unicode": "e60d",
       "unicode_decimal": 58893
+    },
+    {
+      "icon_id": "1242220",
+      "name": "close",
+      "font_class": "close1",
+      "unicode": "e62b",
+      "unicode_decimal": 58923
     },
     {
       "icon_id": "1271848",
@@ -151,6 +165,13 @@
       "font_class": "sousuo",
       "unicode": "e615",
       "unicode_decimal": 58901
+    },
+    {
+      "icon_id": "7826085",
+      "name": "close",
+      "font_class": "baseline-close-px",
+      "unicode": "e617",
+      "unicode_decimal": 58903
     },
     {
       "icon_id": "8288816",

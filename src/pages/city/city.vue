@@ -90,7 +90,6 @@ export default {
   methods: {
     tapLetter(letter) {
       const $ele = document.querySelector('#' + letter);
-      console.log($ele.offsetTop, $ele);
       window.scrollTo(0, $ele.offsetTop - 50);
       this.currentLetter = letter;
       if (this.letterTimer) {

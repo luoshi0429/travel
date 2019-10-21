@@ -12,9 +12,9 @@
           <div class="p-detail-img-list"><img style="width: 100%;" :src="detail.img_main" />图片轮播图预留位置</div>
           <div class="p-detail-product__info">
             <h1>{{ detail.name }}</h1>
-            <p class="price">¥<span>-</span></p>
+            <p class="price">¥<span>{{ currentSku.price }}</span></p>
             <!-- 所有规格的库存 -->
-            <p class="sale"><span>已售：{{ detail.saled_num }}</span><span>库存：{{ detail.quantity }}</span></p>
+            <p class="sale"><span>已售：{{ currentSku.saled_num }}</span><span>库存：{{ currentSku.quantity }}</span></p>
           </div>
         </div>
         <div class="p-detail-location">
@@ -24,14 +24,23 @@
         <div class="p-detail-sku">
           <div class="p-detail-sku__left">选择规格</div>
           <div class="p-detail-sku__right">
-            <p class="p-detail-sku__right__text">{{ detail.skugrups[0].text }}：</p>
+            <p class="p-detail-sku__right__text">{{ skugrup.text }}：</p>
             <div class="p-detail-sku__right__skus">
-              <span class="p-detail-sku__right__sku" v-for="(sku, index) in detail.skugrups[0].skus" :key="index">{{ sku.sku_text }}</span>
+              <span
+                class="p-detail-sku__right__sku"
+                :class="{ selected: index === skuIndex }"
+                v-for="(sku, index) in skugrup.skus"
+                :key="index"
+                @click="tapSku(index)"
+              >{{ sku.sku_text }}</span>
             </div>
           </div>
         </div>
       </div>
-      <div v-if="showTab === 0" class="p-detail-section p-detail-info" v-html="detail.detailHtml"></div>
+      <div v-if="showTab === 0" class="p-detail-section p-detail-info">
+        <p>图文介绍</p>
+        <div v-html="detail.detailHtml"></div>
+      </div>
       <div v-if="showTab === 1" class="p-detail-section p-detail-instruction">
         <div class="p-detail-instruction-item">
           <h2>产品</h2>
@@ -39,8 +48,8 @@
         </div>
         <div class="p-detail-instruction-item">
           <h2>规格</h2>
-          <template v-if="detail.skugrups.length">
-            <p v-for="(sku, index) in detail.skugrups[0].skus" :key="index">{{ sku.sku_text }}</p>
+          <template v-if="skugrup.skus.length">
+            <p v-for="(sku, index) in skugrup.skus" :key="index">{{ sku.sku_text }}</p>
           </template>
         </div>
       </div>
@@ -62,19 +71,26 @@ export default {
     return {
       detail: { skugrups: [] },
       showTab: 0,
-      skuIndex: 0
+      skuIndex: 0,
+      skugrup: {},
+      currentSku: {},
+      productId: this.$route.params.id
     };
   },
   mounted() {
+    // this.productId = this.$route.params.id;
     this.requestDetail();
   },
   methods: {
     requestDetail() {
-      const id = this.$route.params.id;
-      getProductDetail(id)
+      // const id = this.$route.params.id;
+      getProductDetail(this.productId)
         .then(r => {
           console.log(r);
           this.detail = r.result;
+          const skugrup = r.result.skugrups[0] || {};
+          this.skugrup = skugrup;
+          this.currentSku = skugrup.skus[0];
         }).catch(err => {
           console.error(err);
         });
@@ -103,11 +119,33 @@ export default {
     tapBuy() {
       console.log('立即抢购');
       // TODO: 第一次点击引导关注公众号 -> vip
-      this.$router.push(`/pay/${this.$route.params.id}`);
+      // this.$router.push(`/pay/${this.$route.params.id}`);
+      this.$router.push({
+        path: '/pay',
+        query: {
+          id: this.$route.params.id,
+          skuId: this.currentSku.sku_id
+        }
+      });
     },
     // 分享海报
     tapShowPoster() {
       console.log('分享海报');
+    },
+    // 选择规格
+    tapSku(index) {
+      this.skuIndex = index;
+      this.currentSku = this.skugrup.skus[index];
+      // TODO: 接口bug
+      // const skuId = this.skugrup.skus[index].sku_id;
+      // getProductSku({
+      //   product_id: this.productId,
+      //   sku_id: skuId
+      // }).then(r => {
+      //   console.info(r);
+      // }).catch(err => {
+      //   console.error(err);
+      // });
     }
   }
 };
@@ -254,13 +292,17 @@ export default {
 // }
 .p-detail-sku__right__sku {
   display: inline-block;
-  border: 1px solid $main_color;
   border-radius: 3px;
   margin-right: 6px;
   margin-bottom: 6px;
-  color: $main_color;
-  padding: 4px 6px;
-  background: rgba(252, 109, 69, 0.15);
+  color: #555;
+  padding: 6px 8px;
+  background: #eee;
+  &.selected {
+    color: $main_color;
+    border: 1px solid $main_color;
+    background: rgba(252, 109, 69, 0.15);
+  }
 }
 
 .p-detail-instruction-item {

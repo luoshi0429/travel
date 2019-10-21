@@ -34,18 +34,22 @@ export default {
 <style lang="scss" scoped>
 .l-main-page {
   height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .l-tabbar-layout {
-  height: 100%;
-  padding-bottom: 48px;
+  // height: 100%;
+  flex: 1;
+  // padding-bottom: 48px;
+  overflow-y: auto;
 }
 
 .c-tabbar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  // position: fixed;
+  // left: 0;
+  // right: 0;
+  // bottom: 0;
   height: 48px;
   display: flex;
   background: #fff;

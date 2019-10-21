@@ -38,7 +38,7 @@ const router = new Router({
       component: () => import('@/pages/detail/detail')
     },
     {
-      path: '/pay/:id',
+      path: '/pay',
       name: 'pay',
       component: () => import('@/pages/pay/pay')
     },

@@ -23,7 +23,7 @@ export default {
         { title: '我的订单', icon: 'icon-icon-test3', path: '' },
         { title: '我的会员', icon: 'icon-vip', path: '' },
         { title: '设置', icon: 'icon-shezhi', path: '' },
-        { title: '售后服务', icon: 'icon-rili', path: '' }
+        // { title: '售后服务', icon: 'icon-rili', path: '' }
       ]
     };
   }

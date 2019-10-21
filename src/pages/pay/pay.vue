@@ -3,9 +3,9 @@
     <div class="p-pay-panel">
       <div class="p-pay-section p-pay-desc">
         <p class="title">订单描述</p>
-        <h2>【长隆】1票玩2远~</h2>
+        <h2>{{ detail.name }}</h2>
         <p class="sku">
-          <span>规格</span> 长隆水路万圣节:129=1人
+          <span>规格</span> {{ skuTitle }}:{{ sku.sku_text }}
         </p>
       </div>
       <div class="p-pay-section p-pay-contact">
@@ -25,7 +25,9 @@
         <div class="p-pay-count-cell">
           <p>购买数量</p>
           <div class="p-pay-count-cell__right p-pay-count-input">
-            <button><i class="iconfont icon-minus1"></i></button><input v-model="buyCount" placeholder="数量" /><button><i class="iconfont icon-cc-plus-crude"></i></button>
+            <button @click="tapMinus"><i class="iconfont icon-minus1"></i></button>
+            <input v-model="buyCount" placeholder="数量" />
+            <button @click="tapPlus"><i class="iconfont icon-cc-plus-crude"></i></button>
           </div>
         </div>
         <div class="p-pay-count-cell">
@@ -47,34 +49,62 @@
       </div>
     </div>
     <div class="p-pay-footer">
-      <div class="p-pay-footer-total">合计：<em>129.00</em></div>
+      <div class="p-pay-footer-total">合计：<em v-if="sku.price">{{ sku.price * buyCount }}</em></div>
       <button class="p-pay-footer-btn">微信支付</button>
     </div>
   </div>
 </template>
 
 <script>
-import { getProductDetail } from '@/api';
+import { getProductDetail, getProductSku } from '@/api';
 
 export default {
   data() {
+    const { id, skuId } = this.$route.query;
     return {
-      buyCount: 1
+      buyCount: 1,
+      detail: {},
+      productId: id,
+      skuId,
+      sku: {},
+      skuTitle: ''
     };
   },
   mounted() {
-    this.requestDetail();
+    Promise.all([getProductDetail(this.productId), getProductSku({
+      product_id: this.productId,
+      sku_id: this.skuId
+    })]).then(r => {
+      console.log(r);
+      const detail = r[0].result;
+      if (!detail) {
+        throw detail;
+      }
+      this.detail = detail;
+      // this.sku = r[1];
+      // TODO: 利用接口数据
+      this.skuTitle = detail.skugrups[0].text;
+      const sku = detail.skugrups[0].skus.filter(s => {
+        return s.sku_id === this.skuId;
+      });
+      this.sku = sku[0];
+    }).catch(err => {
+      console.error(err);
+    });
   },
   methods: {
-    requestDetail() {
-      const id = this.$route.params.id;
-      getProductDetail(id)
-        .then(r => {
-          console.log(r);
-          this.detail = r.result;
-        }).catch(err => {
-          console.error(err);
-        });
+    tapMinus() {
+      if (this.buyCount <= 1) {
+        return;
+      }
+      this.buyCount -= 1;
+    },
+    tapPlus() {
+      // 大于库存
+      if (this.buyCount >= this.sku.quantity) {
+        return;
+      }
+      this.buyCount += 1;
     }
   }
 };
@@ -184,6 +214,7 @@ export default {
       }
     }
     input {
+      font-size: 18px;
       width: 60px;
       height: 100%;
       border: 1px solid #eee;
