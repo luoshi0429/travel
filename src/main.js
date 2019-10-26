@@ -4,6 +4,11 @@ import App from './App.vue';
 import store from './store';
 
 import '@/styles/basic.scss';
+import 'swiper/dist/css/swiper.css';
+import VueAwesomeSwiper from 'vue-awesome-swiper';
+Vue.use(VueAwesomeSwiper);
+
+
 
 Vue.config.productionTip = false;
 
