@@ -37,6 +37,16 @@ const router = new Router({
       component: () => import('@/pages/city/city')
     },
     {
+      path: '/vip',
+      name: 'vip',
+      component: () => import('@/pages/vip/vip'),
+    },
+    {
+      path: '/vip/success',
+      name: 'vipSuccess',
+      component: () => import('@/pages/vip/success')
+    },
+    {
       path: '/detail/:id',
       name: 'detail',
       component: () => import('@/pages/detail/detail')

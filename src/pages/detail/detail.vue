@@ -9,6 +9,16 @@
         <div class="p-detail-carousel"></div>
         <div class="p-detail-product">
           <!-- 图片轮播图预留位置 -->
+          <swiper :options="swiperOption" ref="mySwiper">
+            <!-- slides -->
+            <swiper-slide>I'm Slide 1</swiper-slide>
+            <swiper-slide>I'm Slide 2</swiper-slide>
+            <swiper-slide>I'm Slide 3</swiper-slide>
+            <swiper-slide>I'm Slide 4</swiper-slide>
+            <!-- Optional controls -->
+            <div class="swiper-pagination "  slot="pagination"></div>
+            <!-- <div class="swiper-scrollbar"   slot="scrollbar"></div> -->
+          </swiper>
           <div class="p-detail-img-list"><img style="width: 100%;" :src="detail.img_main" />图片轮播图预留位置</div>
           <div class="p-detail-product__info">
             <h1>{{ detail.name }}</h1>
@@ -65,8 +75,13 @@
 
 <script>
 import { getProductDetail, getProductSku } from '@/api';
+import { swiper, swiperSlide } from 'vue-awesome-swiper';
 
 export default {
+  components: {
+    swiper,
+    swiperSlide
+  },
   data() {
     return {
       detail: { skugrups: [] },
@@ -74,7 +89,46 @@ export default {
       skuIndex: 0,
       skugrup: {},
       currentSku: {},
-      productId: this.$route.params.id
+      productId: this.$route.params.id,
+      carouselValue: 0,
+      swiperOption: {
+        notNextTick: true,
+        // 循环
+        loop: true,
+        // 设定初始化时slide的索引
+        initialSlide: 0,
+        // 自动播放
+        autoplay: true,
+        // autoplay: {
+        //     delay: 3000,
+        //     stopOnLastSlide: false,
+        //     disableOnInteraction: true,
+        // },
+        // 设置轮播
+        effect: 'slide',
+        // 滑动速度
+        speed: 500,
+        // 滑动方向
+        direction: 'horizontal',
+        // 小手掌抓取滑动
+        grabCursor: true,
+        // 滑动之后回调函数
+        on: {
+          slideChangeTransitionEnd: function() {
+            // console.log(this.activeIndex);//切换结束时，告诉我现在是第几个slide
+          },
+        },
+        // 左右点击
+        // navigation: {
+        //   nextEl: '.swiper-button-next',
+        //   prevEl: '.swiper-button-prev',
+        // },
+        // 分页器设置
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: false
+        }
+      },
     };
   },
   mounted() {
@@ -151,8 +205,16 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" >
 @import '../../styles/common.scss';
+.swiper-slide{
+  height:200px;
+}
+.mint-swipe-items-wrap {
+  overflow: hidden;
+  position: relative;
+  height: 100%;
+}
 .p-detail-header-tab {
   display: flex;
   height: 48px;
