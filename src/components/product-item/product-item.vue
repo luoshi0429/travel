@@ -86,6 +86,9 @@ export default {
   padding-bottom: 10px;
   margin-bottom: 15px;
   border-radius: 4px;
+  &:last-of-type {
+    margin-bottom: 0;
+  }
 }
 
 .c-product-item__top {
@@ -133,8 +136,9 @@ export default {
 .c-product-item__bottom {
   padding: 8px 10px 0;
   h4 {
-    font-size: 16px;
+    font-size: 14px;
     margin-bottom: 16px;
+    line-height: 1.4;
   }
   &__price {
     display: flex;
@@ -142,7 +146,9 @@ export default {
     color: $main_color;
     p {
       span {
-        font-size: 22px;
+        font-size: 20px;
+        font-weight: 500;
+        margin-left: 1px;
       }
     }
     .btn {

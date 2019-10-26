@@ -29,6 +29,10 @@ const router = new Router({
       ]
     },
     {
+      path: '/search',
+      component: () => import('@/pages/home/search')
+    },
+    {
       path: '/city',
       component: () => import('@/pages/city/city')
     },
