@@ -8,18 +8,18 @@
       <div class="p-detail-top">
         <div class="p-detail-carousel"></div>
         <div class="p-detail-product">
-          <!-- 图片轮播图预留位置 -->
-          <swiper :options="swiperOption" ref="mySwiper">
-            <!-- slides -->
-            <swiper-slide>I'm Slide 1</swiper-slide>
-            <swiper-slide>I'm Slide 2</swiper-slide>
-            <swiper-slide>I'm Slide 3</swiper-slide>
-            <swiper-slide>I'm Slide 4</swiper-slide>
-            <!-- Optional controls -->
-            <div class="swiper-pagination "  slot="pagination"></div>
-            <!-- <div class="swiper-scrollbar"   slot="scrollbar"></div> -->
-          </swiper>
-          <div class="p-detail-img-list"><img style="width: 100%;" :src="detail.img_main" />图片轮播图预留位置</div>
+          <div class="p-detail-img-list">
+            <!-- 图片轮播图预留位置 -->
+            <swiper :options="swiperOption" ref="mySwiper">
+              <!-- slides -->
+              <swiper-slide v-for="(img, index) in detail.img_list" :key="index">
+                <img class="p-detail-banner__img" :src="img" />
+              </swiper-slide>
+              <!-- Optional controls -->
+              <div class="swiper-pagination "  slot="pagination"></div>
+              <!-- <div class="swiper-scrollbar"   slot="scrollbar"></div> -->
+            </swiper>
+          </div>
           <div class="p-detail-product__info">
             <h1>{{ detail.name }}</h1>
             <p class="price">¥<span>{{ currentSku.price }}</span></p>
@@ -66,24 +66,29 @@
     </div>
     <div class="p-detail-buy-section">
       <div class="p-detail-icon-btn" @click="tapHome"><i class="iconfont icon-shouye"></i><p>首页</p></div>
-      <div class="p-detail-icon-btn" @click="tapCustomerService"><i class="iconfont icon-kefu"></i><p>客服</p></div>
+      <!-- <div class="p-detail-icon-btn" @click="tapCustomerService"><i class="iconfont icon-kefu"></i><p>客服</p></div> -->
       <button @click="tapBuy" class="p-detail-buy-btn">立即抢购</button>
     </div>
-    <button @click="tapShowPoster" class="p-detail-poster-btn">分享海报</button>
+    <button @click="tapShowPoster" class="p-detail-poster-btn" v-if="detail.img_poster">分享海报</button>
+    <poster :imgSrc="detail.img_poster" :show="showPoster" @tapPoster="handleTapPoster" />
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import { getProductDetail, getProductSku } from '@/api';
 import { swiper, swiperSlide } from 'vue-awesome-swiper';
+import Poster from '@/components/poster/poster';
 
 export default {
   components: {
     swiper,
-    swiperSlide
+    swiperSlide,
+    Poster
   },
   data() {
     return {
+      showPoster: false,
       detail: { skugrups: [] },
       showTab: 0,
       skuIndex: 0,
@@ -131,6 +136,11 @@ export default {
       },
     };
   },
+  computed: {
+    ...mapState({
+      uid: state => state.user.uid
+    })
+  },
   mounted() {
     // this.productId = this.$route.params.id;
     this.requestDetail();
@@ -172,6 +182,10 @@ export default {
     // 立即抢购
     tapBuy() {
       console.log('立即抢购');
+      // 是否有uid
+      if (!this.uid) {
+        // 授权
+      }
       // TODO: 第一次点击引导关注公众号 -> vip
       // this.$router.push(`/pay/${this.$route.params.id}`);
       this.$router.push({
@@ -185,6 +199,10 @@ export default {
     // 分享海报
     tapShowPoster() {
       console.log('分享海报');
+      this.showPoster = true;
+    },
+    handleTapPoster() {
+      this.showPoster = false;
     },
     // 选择规格
     tapSku(index) {
@@ -207,9 +225,6 @@ export default {
 
 <style lang="scss" >
 @import '../../styles/common.scss';
-.swiper-slide{
-  height:200px;
-}
 .mint-swipe-items-wrap {
   overflow: hidden;
   position: relative;
@@ -239,7 +254,10 @@ export default {
 }
 
 .p-detail-img-list {
-  height: 250px;
+  min-height: 160px;
+}
+.p-detail-banner__img {
+  width: 100%;
 }
 
 .p-detail-buy-section {
@@ -279,6 +297,7 @@ export default {
   position: fixed;
   top: 100px;
   right: 0;
+  z-index: 9;
   background: rgba(0, 0, 0, 0.6);
   color: #fff;
   padding: 4px 10px;
@@ -290,7 +309,7 @@ export default {
   // padding: 10px 15px 20px;
   border-bottom: 1px solid #eee;
   &__info {
-    padding: 10px 15px 20px;
+    padding: 20px 15px;
   }
   h1 {
     font-size: 16px;
@@ -329,6 +348,9 @@ export default {
 
 .p-detail-section {
   padding: 15px;
+  img {
+    width: 100%;
+  }
 }
 
 .p-detail-sku {

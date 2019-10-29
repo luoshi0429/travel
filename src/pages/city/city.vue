@@ -6,12 +6,12 @@
     </div>
     <div class="p-city-panel">
       <div class="p-city-current">
-        <p>当前所选：{{ currentCity.name }}</p>
+        <p>当前所选：{{ selectedAddress.name || ' - ' }}</p>
       </div>
       <div class="p-city-top">
         <div class="p-city-location">
           <p>当前定位/最近访问城市</p>
-          <p class="p-city-item" @click="tapCity(city)"><i class="iconfont icon-location1"></i> <span>{{ currentCity.name }}</span></p>
+          <p class="p-city-item" @click="tapCity(address)"><i class="iconfont icon-location1"></i> <span>{{ address.name || ' - '}}</span></p>
         </div>
         <div class="p-city-hot">
           <p>热门城市</p>
@@ -20,7 +20,7 @@
               class="p-city-hot__item"
               v-for="hot in hotCities"
               :key="hot.name"
-              @click="tapCity(city)"
+              @click="tapCity(hot)"
             >
               <span class="p-city-item">{{ hot.name }}</span>
             </div>
@@ -65,29 +65,33 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex';
 import cities from '@/assets/cities';
-
 export default {
   data() {
     return {
-      currentCity: { name: '广州' },
       hotCities: [
-        { name: '北京', cityId: '' },
-        { name: '上海', cityId: '' },
-        { name: '广州', cityId: '' },
-        { name: '成都' },
-        { name: '重庆' },
-        { name: '佛山' },
-        { name: '深圳' },
-        { name: '珠海' },
-        { name: '东莞' }
+        { name: '北京', cityId: '10', pvovinceId: '10' },
+        { name: '上海', cityId: '11', pvovinceId: '11' },
+        { name: '广州', cityId: '1292', pvovinceId: '29' },
+        { name: '成都', cityId: '1348', pvovinceId: '32' },
+        { name: '佛山', cityId: '1297', pvovinceId: '29' },
+        { name: '深圳', cityId: '1293', pvovinceId: '29' },
+        { name: '杭州', cityId: '1178', pvovinceId: '21' }
       ],
       letterCities: cities,
       currentLetter: '',
       searchCities: []
     };
   },
+  computed: {
+    ...mapState({
+      address: state => state.user.address,
+      selectedAddress: state => state.user.selectedAddress
+    })
+  },
   methods: {
+    ...mapActions(['setSelectedAddress']),
     tapLetter(letter) {
       const $ele = document.querySelector('#' + letter);
       window.scrollTo(0, $ele.offsetTop - 50);
@@ -101,7 +105,9 @@ export default {
       }, 1000);
     },
     tapCity(city) {
-
+      console.info(city);
+      this.setSelectedAddress(city);
+      this.$router.replace('/');
     },
     handleSearchCity(e) {
       const val = e.target.value;
@@ -142,6 +148,17 @@ export default {
 @import '../../styles/common.scss';
 .p-city {
   font-size: 16px;
+}
+
+@media screen and (max-width: 320px){
+  .p-city {
+    font-size: 14px;
+  }
+  .p-city-letter-list {
+   .p-city-letter {
+     margin: 3px 0;
+   }
+  }
 }
 
 .c-letter-toast {
@@ -249,15 +266,16 @@ export default {
 
 .p-city-letter-list {
   position: fixed;
-  top: 50%;
-  transform: translateY(-50%);
+  // top: 50%;
+  // transform: translateY(-50%);
+  top: 58px;
   right: 0;
-  padding: 10px;
+  padding: 0 10px;
   background: #f2f2f2;
 }
 .p-city-letter {
   display: block;
-  margin: 10px 0;
+  margin: 8px 0;
   color: $main_color;
   font-weight: bold;
 }

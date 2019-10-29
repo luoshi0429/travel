@@ -13,11 +13,11 @@
         <div>
           <div class="p-pay-formcontrol">
             <p><span class="asterisk">*</span>姓名</p>
-            <input placeholder="请输入姓名" />
+            <input v-model="name" placeholder="请输入姓名" />
           </div>
           <div class="p-pay-formcontrol">
             <p><span class="asterisk">*</span>手机</p>
-            <input type="number" placeholder="请输入手机号码" />
+            <input v-model="phoneNumber" type="number" placeholder="请输入手机号码" />
           </div>
         </div>
       </div>
@@ -50,13 +50,14 @@
     </div>
     <div class="p-pay-footer">
       <div class="p-pay-footer-total">合计：<em v-if="sku.price">{{ sku.price * buyCount }}</em></div>
-      <button class="p-pay-footer-btn">微信支付</button>
+      <button class="p-pay-footer-btn" @click="tapWechatPay">微信支付</button>
     </div>
   </div>
 </template>
 
 <script>
-import { getProductDetail, getProductSku } from '@/api';
+import { mapState } from 'vuex';
+import { getProductDetail, getProductSku, confirmOrder } from '@/api';
 
 export default {
   data() {
@@ -67,8 +68,15 @@ export default {
       productId: id,
       skuId,
       sku: {},
-      skuTitle: ''
+      skuTitle: '',
+      name: '',
+      phoneNumber: ''
     };
+  },
+  computed: {
+    ...mapState({
+      uid: state => state.user.uid
+    })
   },
   mounted() {
     Promise.all([getProductDetail(this.productId), getProductSku({
@@ -105,6 +113,20 @@ export default {
         return;
       }
       this.buyCount += 1;
+    },
+    tapWechatPay() {
+      confirmOrder({
+        product_id: this.productId,
+        sku_id: this.skuId,
+        buy_count: this.buyCount,
+        uid: this.uid,
+        customer_name: this.name,
+        customer_mobile: this.phoneNumber
+      }).then(res => {
+        console.info(res);
+      }, (err) => {
+        console.error(err);
+      });
     }
   }
 };

@@ -8,7 +8,6 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
       component: () => import('@/components/layout/tabbar-layout'),
       children: [
         {

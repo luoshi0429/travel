@@ -14,10 +14,21 @@ module.exports = {
     port: 15008,
 
     proxy: {
-      '^/api/shop/': {
-        target: 'http://47.92.154.203:666',
+      '^/api/': {
+        // target: 'http://47.92.154.203:666',
+        target: 'http://shop.npnet66.com',
         changeOrigin: true,
-      }
+      },
+      // '^/api/shop_order/': {
+      //   // target: 'http://47.92.154.203:666',
+      //   target: 'http://shop.npnet66.com',
+      //   changeOrigin: true,
+      // },
+      // '^/api/weixin/': {
+      //   // target: 'http://47.92.154.203:666',
+      //   target: 'http://shop.npnet66.com',
+      //   changeOrigin: true,
+      // },
     }
   }
 };

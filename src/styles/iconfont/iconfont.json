@@ -258,6 +258,13 @@
       "unicode_decimal": 59519
     },
     {
+      "icon_id": "9358632",
+      "name": "checked",
+      "font_class": "checked",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
       "icon_id": "10132054",
       "name": "avatar",
       "font_class": "avatar",

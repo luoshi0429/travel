@@ -6,7 +6,7 @@ import qs from 'qs';
  * @param {Object} params
  */
 export const getProductList = (params) => {
-  return api.get('/getProductList', { params });
+  return api.get('/shop/getProductList', { params });
 };
 
 /**
@@ -14,7 +14,7 @@ export const getProductList = (params) => {
  * @param {Number} id 产品id
  */
 export const getProductDetail = (id) => {
-  return api.get('/getProductByID', { params: { id } });
+  return api.get('/shop/getProductByID', { params: { id } });
 };
 
 /**
@@ -22,7 +22,7 @@ export const getProductDetail = (id) => {
  * @param {Object} params product_id、sku_id
  */
 export const getProductSku = (params) => {
-  return api.get('/getProductSku', { params });
+  return api.get('/shop/getProductSku', { params });
 };
 
 /**
@@ -30,15 +30,7 @@ export const getProductSku = (params) => {
  * @param {Object} params product_id、sku_id
  */
 export const productVerification = (params) => {
-  return api.get('/productVerification', { params });
-};
-
-/**
- * 下单
- * @param {String} orders 分销订单号，多个订单用,分开
- */
-export const submitOrder = (orders) => {
-  return api.get('/submitOrder', { params: { orders } });
+  return api.get('/shop/productVerification', { params });
 };
 
 /**
@@ -46,7 +38,7 @@ export const submitOrder = (orders) => {
  * @param {Object} data
  */
 export const confirmOrder = (data) => {
-  return api.post('submitOrder', { data: qs.stringify(data) });
+  return api.post('/shop_order/submitOrder', { data: qs.stringify(data) });
 };
 
 /**
@@ -54,5 +46,14 @@ export const confirmOrder = (data) => {
  * @param {String} orderIds 订单id
  */
 export const getOrderList = (orderIds) => {
-  return api.get('/getOrderList', { params: { orderIds } });
+  return api.get('/shop_order/getOrderList', { params: { orderIds } });
+};
+
+/**
+ * 获取用户信息
+ */
+export const getUserInfo = (uid) => {
+  return api.post('/weixin/getUser', {
+    data: qs.stringify({ uid })
+  });
 };

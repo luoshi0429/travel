@@ -2,7 +2,7 @@
   <div class="p-vip-success">
     <div class="wrapper">
       <div class="top">
-        <i class="success-icon"></i>
+        <i class="iconfont icon-checked success-icon"></i>
         <span class="text">购买成功</span>
       </div>
       <div class="dashed-line"></div>
@@ -49,14 +49,12 @@ export default {
     flex-direction: column;
     align-items: center;
     .success-icon {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: pink;
+      font-size: 48px;
+      color: pink;
       margin-bottom: 20px;
     }
     .text {
-      font-size: 20px;
+      font-size: 16px;
     }
   }
   .dashed-line {

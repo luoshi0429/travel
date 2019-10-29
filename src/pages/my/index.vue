@@ -5,12 +5,17 @@
       <p>张三</p>
     </div>
     <div class="p-my-cells">
-      <div class="p-my-cell" v-for="(cell, index) in cells" :key="index">
+      <router-link
+        :to="cell.path"
+        class="p-my-cell"
+        v-for="(cell, index) in cells"
+        :key="index"
+      >
         <div class="p-my-cell__left">
           <i class="iconfont" :class="cell.icon"></i> {{ cell.title }}
         </div>
         <i class="iconfont icon-icon-test3" ></i>
-      </div>
+      </router-link>
     </div>
   </div>
 </template>
@@ -21,7 +26,7 @@ export default {
     return {
       cells: [
         { title: '我的订单', icon: 'icon-icon-test3', path: '' },
-        { title: '我的会员', icon: 'icon-vip', path: '' },
+        { title: '会员', icon: 'icon-vip', path: '/vip' },
         { title: '设置', icon: 'icon-shezhi', path: '' },
         // { title: '售后服务', icon: 'icon-rili', path: '' }
       ]
@@ -62,6 +67,7 @@ export default {
 }
 
 .p-my-cell {
+  color: #333;
   display: flex;
   justify-content: space-between;
   align-items: center;

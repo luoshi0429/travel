@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const $axios = axios.create({
-  baseURL: '/api/shop/',
+  baseURL: '/api/',
   timeout: 8000
 });
 

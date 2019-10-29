@@ -147,7 +147,7 @@ export default {
       text-align: center;
       height: 60px;
       line-height: 60px;
-      font-size: 20px;
+      font-size: 18px;
       color: #999;
       padding-bottom: 12px;
       border-bottom: 3px solid transparent;
@@ -158,6 +158,7 @@ export default {
     }
   }
   .tab-content {
+    margin: 20px 0;
     .desc {
       font-size: 14px;
       color: #333;
@@ -167,6 +168,11 @@ export default {
       display: flex;
       margin-top: 12px;
       overflow-x: scroll;
+      // 隐藏滚动条
+       -ms-overflow-style: none;
+      &::-webkit-scrollbar {
+        display: none;
+      }
       .price-item {
         padding: 12px;
         margin-right: 8px;
@@ -200,14 +206,16 @@ export default {
   .buy-tips-wrapper {
     margin-top: 20px;
     .buy-title {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: bold;
       margin-bottom: 12px;
+      color: #777;
     }
     .buy-tips-list {
       list-style-type: decimal;
       padding: 0 20px;
       li {
+        color: #999;
         font-size: 14px;
         line-height: 1.5;
         margin-bottom: 5px;
@@ -221,7 +229,7 @@ export default {
     text-align: center;
     background: $main_color;
     color: #fff;
-    font-size: 18px;
+    font-size: 16px;
     border-radius: 2px;
     position: fixed;
     left: 0;

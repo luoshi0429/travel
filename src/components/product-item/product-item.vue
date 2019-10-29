@@ -32,7 +32,7 @@ export default {
     product: {
       handler(val) {
         if (!val.end_time) return;
-        const endDate = new Date(val.end_time).getTime();
+        const endDate = new Date(val.end_time.replace('-', '/')).getTime();
         if (this.countTimer) {
           clearInterval(this.countTimer);
           this.countTimer = null;
@@ -96,6 +96,7 @@ export default {
   // padding: 4px 6px 0;
   img {
     width: 100%;
+    min-height: 120px;
   }
   &__sale {
     position: absolute;
