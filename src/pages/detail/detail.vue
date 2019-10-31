@@ -10,7 +10,7 @@
         <div class="p-detail-product">
           <div class="p-detail-img-list">
             <!-- 图片轮播图预留位置 -->
-            <swiper :options="swiperOption" ref="mySwiper">
+            <swiper v-if="detail.img_list && detail.img_list.length > 0" :options="swiperOption" ref="mySwiper">
               <!-- slides -->
               <swiper-slide v-for="(img, index) in detail.img_list" :key="index">
                 <img class="p-detail-banner__img" :src="img" />
@@ -19,6 +19,7 @@
               <div class="swiper-pagination "  slot="pagination"></div>
               <!-- <div class="swiper-scrollbar"   slot="scrollbar"></div> -->
             </swiper>
+            <img v-else :src="detail.img_main" class="p-detail-banner__img" />
           </div>
           <div class="p-detail-product__info">
             <h1>{{ detail.name }}</h1>
@@ -67,6 +68,7 @@
     <div class="p-detail-buy-section">
       <div class="p-detail-icon-btn" @click="tapHome"><i class="iconfont icon-shouye"></i><p>首页</p></div>
       <!-- <div class="p-detail-icon-btn" @click="tapCustomerService"><i class="iconfont icon-kefu"></i><p>客服</p></div> -->
+      <button @click="tapBeVip" class="p-detail-vip-btn">成为会员<span>(返{{ (currentSku.price * 0.07).toFixed(0) }}元)</span></button>
       <button @click="tapBuy" class="p-detail-buy-btn">立即抢购</button>
     </div>
     <button @click="tapShowPoster" class="p-detail-poster-btn" v-if="detail.img_poster">分享海报</button>
@@ -186,6 +188,8 @@ export default {
       if (!this.uid) {
         // 授权
       }
+      // 是否有手机号码
+      // 跳转到手机登录页
       // TODO: 第一次点击引导关注公众号 -> vip
       // this.$router.push(`/pay/${this.$route.params.id}`);
       this.$router.push({
@@ -195,6 +199,9 @@ export default {
           skuId: this.currentSku.sku_id
         }
       });
+    },
+    tapBeVip() {
+      this.$router.push('/vip');
     },
     // 分享海报
     tapShowPoster() {
@@ -229,6 +236,17 @@ export default {
   overflow: hidden;
   position: relative;
   height: 100%;
+}
+.p-detail {
+  height: 100%;
+  padding-bottom: 50px;
+  display: flex;
+  flex-direction: column;
+}
+
+.p-detail-content {
+  flex: 1;
+  overflow-y: auto;
 }
 .p-detail-header-tab {
   display: flex;
@@ -269,7 +287,7 @@ export default {
   display: flex;
 }
 .p-detail-icon-btn {
-  width: 70px;
+  width: 60px;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -285,12 +303,20 @@ export default {
     margin-bottom: 1px;
   }
 }
+.p-detail-vip-btn {
+  flex: 1;
+  color: $main_color;
+  font-size: 15px;
+  span {
+    font-size: 12px;
+  }
+}
 .p-detail-buy-btn {
   flex: 1;
   background: $main_color;
   color: #fff;
   text-align: center;
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .p-detail-poster-btn {

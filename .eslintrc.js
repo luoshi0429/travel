@@ -129,6 +129,7 @@ module.exports = {
   globals: {
     'chrome': true,
     'wx': true,
-    qq: true
+    qq: true,
+    WeixinJSBridge: true
   }
 };

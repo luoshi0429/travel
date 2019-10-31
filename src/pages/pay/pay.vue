@@ -115,18 +115,41 @@ export default {
       this.buyCount += 1;
     },
     tapWechatPay() {
-      confirmOrder({
-        product_id: this.productId,
-        sku_id: this.skuId,
-        buy_count: this.buyCount,
-        uid: this.uid,
-        customer_name: this.name,
-        customer_mobile: this.phoneNumber
-      }).then(res => {
-        console.info(res);
-      }, (err) => {
-        console.error(err);
-      });
+      // 判断是否在微信内 同时微信版本 超过5
+      if (this.$isWechat && this.$wxVersion > 5) {
+        confirmOrder({
+          product_id: this.productId,
+          sku_id: this.skuId,
+          buy_count: this.buyCount,
+          uid: this.uid,
+          customer_name: this.name,
+          customer_mobile: this.phoneNumber
+        }).then(res => {
+          console.info(res);
+          const invodeWechatPay = () => {
+            //   {"timestamp":"1572227537","result_code":"SUCCESS","sign":"5660768E2E33565F0AE000BB1FBE9846","mch_id":"1481612142","prepay_id":"wx28095217311817958f09a9ef1197993500","return_msg":"OK","package":"WXPay","appid":"wxa8f514537d6829d0","nonce_str":"hvNrk3mwyNi3DoSM","return_code":"SUCCESS","trade_type":"JSAPI"}
+            window.WeixinJSBridge.invoke('getBrandWCPayRequest', {
+              ...res
+            }, function(res) {
+              console.info(res);
+              if (res.err_msg === 'get_brand_wcpay_request:ok') {
+                alert('支付成功');
+              } else if (res.err_msg === 'get_brand_wcpay_request:cancel') {
+                alert('支付失败');
+              }
+            });
+          };
+          if (typeof WeixinJSBridge == 'undefined') {
+            document.addEventListener('WeixinJSBridgeReady', () => {
+              invodeWechatPay();
+            }, false);
+          } else {
+            invodeWechatPay();
+          }
+        }, (err) => {
+          console.error(err);
+        });
+      }
     }
   }
 };

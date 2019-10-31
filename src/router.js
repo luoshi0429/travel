@@ -23,7 +23,7 @@ const router = new Router({
         {
           path: 'my',
           meta: {},
-          component: () => import('@/pages/my')
+          component: () => import('@/pages/my/my')
         }
       ]
     },
@@ -59,6 +59,16 @@ const router = new Router({
       path: '/tag',
       name: 'tag',
       component: () => import('@/pages/tag/tag')
+    },
+    {
+      path: '/order',
+      name: 'order',
+      component: () => import('@/pages/order/order')
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: () => import('@/pages/register/register')
     }
   ]
 });

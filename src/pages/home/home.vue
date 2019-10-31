@@ -99,7 +99,7 @@ export default {
     },
     requestProductList(data) {
       return getProductList({
-        province: this.selectedAddress.provinceId,
+        province: this.selectedAddress.pvovinceId,
         city: this.selectedAddress.cityId,
         // pagenumber: this.currentPage,
         // pagesize: 10,
@@ -143,6 +143,7 @@ export default {
     },
     tapBeVip() {
       console.info('成为会员');
+      this.$router.push('/vip');
     }
   }
 };

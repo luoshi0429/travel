@@ -9,7 +9,12 @@ import VueAwesomeSwiper from 'vue-awesome-swiper';
 Vue.use(VueAwesomeSwiper);
 
 // 判断是否为微信内
-Vue.$isWeixin = /micromessenger/i.test(navigator.userAgent);
+const isWeixin = /micromessenger/i.test(navigator.userAgent);
+Vue.$isWeixin = isWeixin;
+if (isWeixin) {
+  Vue.$wxVersion = navigator.userAgent.match(/MicroMessenger\/([\d.]+)/i)[1];
+}
+
 console.info('in wechat: ', Vue.$isWeixin);
 Vue.config.productionTip = false;
 

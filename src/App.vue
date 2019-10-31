@@ -137,7 +137,7 @@ export default {
             return {
               name: city.name,
               cityId: city.cityId,
-              provinceId: city.pvovinceId
+              pvovinceId: city.pvovinceId
             };
           }
         }
@@ -153,7 +153,7 @@ export default {
       this.updateAddress({
         name: '广州',
         cityId: 1292,
-        provinceId: 29
+        pvovinceId: 29
       });
     },
   }

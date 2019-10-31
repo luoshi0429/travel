@@ -8,10 +8,13 @@ export default {
     address: {
       // name: '广州',
       // cityId: 1292,
-      // provinceId: 29
+      // pvovinceId: 29
     },
     selectedAddress: {},
-    info: {}
+    info: {
+      nickname: '点击授权',
+      headimgurl: ''
+    }
   },
   actions: {
     updateAddress({ commit }, address) {
