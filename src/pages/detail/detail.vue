@@ -1,74 +1,77 @@
 <template>
   <div class="p-detail">
-    <div class="p-detail-header-tab">
-      <div class="p-detail-tab-item" :class="{ selected: showTab === 0 }" @click="tapTab(0)">产品详情</div>
-      <div class="p-detail-tab-item" :class="{ selected: showTab === 1 }" @click="tapTab(1)">使用说明</div>
-    </div>
-    <div class="p-detail-content">
-      <div class="p-detail-top">
-        <div class="p-detail-carousel"></div>
-        <div class="p-detail-product">
-          <div class="p-detail-img-list">
-            <!-- 图片轮播图预留位置 -->
-            <swiper v-if="detail.img_list && detail.img_list.length > 0" :options="swiperOption" ref="mySwiper">
-              <!-- slides -->
-              <swiper-slide v-for="(img, index) in detail.img_list" :key="index">
-                <img class="p-detail-banner__img" :src="img" />
-              </swiper-slide>
-              <!-- Optional controls -->
-              <div class="swiper-pagination "  slot="pagination"></div>
-              <!-- <div class="swiper-scrollbar"   slot="scrollbar"></div> -->
-            </swiper>
-            <img v-else :src="detail.img_main" class="p-detail-banner__img" />
+    <div class="spinner" v-if="loading"></div>
+    <template v-else>
+      <div class="p-detail-header-tab">
+        <div class="p-detail-tab-item" :class="{ selected: showTab === 0 }" @click="tapTab(0)">产品详情</div>
+        <div class="p-detail-tab-item" :class="{ selected: showTab === 1 }" @click="tapTab(1)">使用说明</div>
+      </div>
+      <div class="p-detail-content">
+        <div class="p-detail-top">
+          <div class="p-detail-carousel"></div>
+          <div class="p-detail-product">
+            <div class="p-detail-img-list">
+              <!-- 图片轮播图预留位置 -->
+              <swiper v-if="detail.img_list && detail.img_list.length > 0" :options="swiperOption" ref="mySwiper">
+                <!-- slides -->
+                <swiper-slide v-for="(img, index) in detail.img_list" :key="index">
+                  <img class="p-detail-banner__img" :src="img" />
+                </swiper-slide>
+                <!-- Optional controls -->
+                <div class="swiper-pagination "  slot="pagination"></div>
+                <!-- <div class="swiper-scrollbar"   slot="scrollbar"></div> -->
+              </swiper>
+              <img v-else :src="detail.img_main" class="p-detail-banner__img" />
+            </div>
+            <div class="p-detail-product__info">
+              <h1>{{ detail.name }}</h1>
+              <p class="price">¥<span>{{ currentSku.price }}</span></p>
+              <!-- 所有规格的库存 -->
+              <p class="sale"><span>已售：{{ currentSku.saled_num }}</span><span>库存：{{ currentSku.quantity }}</span></p>
+            </div>
           </div>
-          <div class="p-detail-product__info">
-            <h1>{{ detail.name }}</h1>
-            <p class="price">¥<span>{{ currentSku.price }}</span></p>
-            <!-- 所有规格的库存 -->
-            <p class="sale"><span>已售：{{ currentSku.saled_num }}</span><span>库存：{{ currentSku.quantity }}</span></p>
+          <div class="p-detail-location">
+            <div><i class="iconfont icon-location1"></i> <span>{{ detail.product_addr }}</span></div>
+            <i class="iconfont icon-icon-test3"></i>
           </div>
-        </div>
-        <div class="p-detail-location">
-          <div><i class="iconfont icon-location1"></i> <span>{{ detail.product_addr }}</span></div>
-          <i class="iconfont icon-icon-test3"></i>
-        </div>
-        <div class="p-detail-sku">
-          <div class="p-detail-sku__left">选择规格</div>
-          <div class="p-detail-sku__right">
-            <p class="p-detail-sku__right__text">{{ skugrup.text }}：</p>
-            <div class="p-detail-sku__right__skus">
-              <span
-                class="p-detail-sku__right__sku"
-                :class="{ selected: index === skuIndex }"
-                v-for="(sku, index) in skugrup.skus"
-                :key="index"
-                @click="tapSku(index)"
-              >{{ sku.sku_text }}</span>
+          <div class="p-detail-sku">
+            <div class="p-detail-sku__left">选择规格</div>
+            <div class="p-detail-sku__right">
+              <p class="p-detail-sku__right__text">{{ skugrup.text }}：</p>
+              <div class="p-detail-sku__right__skus">
+                <span
+                  class="p-detail-sku__right__sku"
+                  :class="{ selected: index === skuIndex }"
+                  v-for="(sku, index) in skugrup.skus"
+                  :key="index"
+                  @click="tapSku(index)"
+                >{{ sku.sku_text }}</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div v-if="showTab === 0" class="p-detail-section p-detail-info">
-        <p>图文介绍</p>
-        <div v-html="detail.detailHtml"></div>
-      </div>
-      <div v-if="showTab === 1" class="p-detail-section p-detail-instruction">
-        <div class="p-detail-instruction-item">
-          <h2>产品</h2>
-          <p>{{ detail.name }}</p>
+        <div v-if="showTab === 0" class="p-detail-section p-detail-info">
+          <p>图文介绍</p>
+          <div v-html="detail.detailHtml"></div>
         </div>
-        <div class="p-detail-instruction-item">
-          <h2>规格</h2>
-          <template v-if="skugrup.skus.length">
-            <p v-for="(sku, index) in skugrup.skus" :key="index">{{ sku.sku_text }}</p>
-          </template>
+        <div v-if="showTab === 1" class="p-detail-section p-detail-instruction">
+          <div class="p-detail-instruction-item">
+            <h2>产品</h2>
+            <p>{{ detail.name }}</p>
+          </div>
+          <div class="p-detail-instruction-item">
+            <h2>规格</h2>
+            <template v-if="skugrup.skus.length">
+              <p v-for="(sku, index) in skugrup.skus" :key="index">{{ sku.sku_text }}</p>
+            </template>
+          </div>
         </div>
       </div>
-    </div>
+    </template>
     <div class="p-detail-buy-section">
       <div class="p-detail-icon-btn" @click="tapHome"><i class="iconfont icon-shouye"></i><p>首页</p></div>
       <!-- <div class="p-detail-icon-btn" @click="tapCustomerService"><i class="iconfont icon-kefu"></i><p>客服</p></div> -->
-      <button @click="tapBeVip" class="p-detail-vip-btn">成为会员<span>(返{{ (currentSku.price * 0.07).toFixed(0) }}元)</span></button>
+      <button @click="tapBeVip" class="p-detail-vip-btn">成为会员<span>(返{{ (currentSku.price ? currentSku.price * 0.07 : 0).toFixed(0) }}元)</span></button>
       <button @click="tapBuy" class="p-detail-buy-btn">立即抢购</button>
     </div>
     <button @click="tapShowPoster" class="p-detail-poster-btn" v-if="detail.img_poster">分享海报</button>
@@ -90,6 +93,7 @@ export default {
   },
   data() {
     return {
+      loading: true,
       showPoster: false,
       detail: { skugrups: [] },
       showTab: 0,
@@ -145,12 +149,16 @@ export default {
   },
   mounted() {
     // this.productId = this.$route.params.id;
-    this.requestDetail();
+    this.requestDetail().then(() => {
+      this.loading = false;
+    }).catch(() => {
+      this.loading = false;
+    });
   },
   methods: {
     requestDetail() {
       // const id = this.$route.params.id;
-      getProductDetail(this.productId)
+      return getProductDetail(this.productId)
         .then(r => {
           console.log(r);
           this.detail = r.result;

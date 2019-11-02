@@ -25,7 +25,7 @@
           <i class="iconfont icon-zanwushuju"></i>
           <p>暂无数据</p>
         </div>
-        <div v-show="totalCount !== productList.length" class="c-loadmore">正在加载更多...</div>
+        <div v-show="totalCount !== productList.length" class="g-loadmore">正在加载更多...</div>
       </template>
       <div class="c-home-loading"></div>
     </div>
@@ -221,10 +221,4 @@ export default {
   }
 }
 
-.c-loadmore {
-  line-height: 44px;
-  text-align: center;
-  color: #999;
-  font-size: 12px;
-}
 </style>

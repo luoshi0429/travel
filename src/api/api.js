@@ -1,12 +1,12 @@
 import axios from 'axios';
 
+const baseURL = process.env.NODE_ENV === 'development' ? '/api/' : '/shop/api/';
 const $axios = axios.create({
-  baseURL: '/api/',
+  baseURL,
   timeout: 8000
 });
 
 $axios.interceptors.response.use((res) => {
-  console.info(res);
   return res.data;
 });
 

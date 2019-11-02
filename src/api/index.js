@@ -1,3 +1,4 @@
+import axios from 'axios';
 import api from './api';
 import qs from 'qs';
 
@@ -38,7 +39,7 @@ export const productVerification = (params) => {
  * @param {Object} data
  */
 export const confirmOrder = (data) => {
-  return api.post('/shop_order/submitOrder', { data: qs.stringify(data) });
+  return api.post('/shop_order/submitOrder', qs.stringify(data));
 };
 
 /**
@@ -53,7 +54,10 @@ export const getOrderList = (orderIds) => {
  * 获取用户信息
  */
 export const getUserInfo = (uid) => {
-  return api.post('/weixin/getUser', {
-    data: qs.stringify({ uid })
-  });
+  return api.post('/weixin/getUser', qs.stringify({ uid }));
+};
+
+// 微信jsapi支付
+export const weixinJsapi = (openid) => {
+  return axios.post('/shop/weixin/pay', qs.stringify({ openid }));
 };

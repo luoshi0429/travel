@@ -1,6 +1,9 @@
 module.exports = {
   lintOnSave: 'default',
 
+  // publicPath: '/h5/',
+  assetsDir: 'assets',
+
   // chainWebpack: config => {
   //   const oneOfsMap = config.module.rule('scss').oneOfs.store;
   //   oneOfsMap.forEach(item => {

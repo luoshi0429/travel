@@ -17,7 +17,12 @@
           </div>
           <div class="p-pay-formcontrol">
             <p><span class="asterisk">*</span>手机</p>
-            <input v-model="phoneNumber" type="number" placeholder="请输入手机号码" />
+            <input
+              v-model="phoneNumber"
+              @input="onPhoneInput"
+              type="number"
+              placeholder="请输入手机号码"
+            />
           </div>
         </div>
       </div>
@@ -52,12 +57,18 @@
       <div class="p-pay-footer-total">合计：<em v-if="sku.price">{{ sku.price * buyCount }}</em></div>
       <button class="p-pay-footer-btn" @click="tapWechatPay">微信支付</button>
     </div>
+    <div class="p-pay-loading" v-if="isPaying">
+      <div class="loading-spinner">
+      </div>
+      <p>支付中...</p>
+    </div>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
-import { getProductDetail, getProductSku, confirmOrder } from '@/api';
+import { getProductDetail, getProductSku, confirmOrder, weixinJsapi } from '@/api';
+import { isPhone } from '@/utils/utils';
 
 export default {
   data() {
@@ -70,12 +81,14 @@ export default {
       sku: {},
       skuTitle: '',
       name: '',
-      phoneNumber: ''
+      phoneNumber: '',
+      isPaying: false
     };
   },
   computed: {
     ...mapState({
-      uid: state => state.user.uid
+      uid: state => state.user.uid,
+      openid: state => state.user.info.openid
     })
   },
   mounted() {
@@ -101,6 +114,11 @@ export default {
     });
   },
   methods: {
+    onPhoneInput() {
+      if (this.phoneNumber.length > 11) {
+        this.phoneNumber = this.phoneNumber.slice(0, 11);
+      }
+    },
     tapMinus() {
       if (this.buyCount <= 1) {
         return;
@@ -115,8 +133,24 @@ export default {
       this.buyCount += 1;
     },
     tapWechatPay() {
+      // 判断是否输入姓名 手机
+      if (!this.name) {
+        this.$toast('请输入姓名');
+        return;
+      }
+      if (!this.phoneNumber) {
+        this.$toast('请输入手机号码');
+        return;
+      }
+      // 判断是否为手机号
+      if (!isPhone) {
+        this.$toast('请输入正确的手机号码');
+        return;
+      }
       // 判断是否在微信内 同时微信版本 超过5
-      if (this.$isWechat && this.$wxVersion > 5) {
+      console.info(this.$isWeixin, this.$wxVersion);
+      if (this.$isWeixin && this.$wxVersion > 5) {
+        this.isPaying = true;
         confirmOrder({
           product_id: this.productId,
           sku_id: this.skuId,
@@ -126,28 +160,49 @@ export default {
           customer_mobile: this.phoneNumber
         }).then(res => {
           console.info(res);
-          const invodeWechatPay = () => {
-            //   {"timestamp":"1572227537","result_code":"SUCCESS","sign":"5660768E2E33565F0AE000BB1FBE9846","mch_id":"1481612142","prepay_id":"wx28095217311817958f09a9ef1197993500","return_msg":"OK","package":"WXPay","appid":"wxa8f514537d6829d0","nonce_str":"hvNrk3mwyNi3DoSM","return_code":"SUCCESS","trade_type":"JSAPI"}
-            window.WeixinJSBridge.invoke('getBrandWCPayRequest', {
-              ...res
-            }, function(res) {
-              console.info(res);
-              if (res.err_msg === 'get_brand_wcpay_request:ok') {
-                alert('支付成功');
-              } else if (res.err_msg === 'get_brand_wcpay_request:cancel') {
-                alert('支付失败');
+          if (res.result) {
+            console.info(this.openid, 'pay ---- openid');
+            weixinJsapi(this.openid).then(r => {
+              console.info('====', r);
+              r = r.data;
+              const payParams = {
+                appId: r.appid,
+                nonceStr: r.nonce_str,
+                timeStamp: r.timestamp,
+                package: r.package,
+                signType: 'MD5',
+                paySign: r.sign
+              };
+              const invodeWechatPay = () => {
+                //   {"timestamp":"1572227537","result_code":"SUCCESS","sign":"5660768E2E33565F0AE000BB1FBE9846","mch_id":"1481612142","prepay_id":"wx28095217311817958f09a9ef1197993500","return_msg":"OK","package":"WXPay","appid":"wxa8f514537d6829d0","nonce_str":"hvNrk3mwyNi3DoSM","return_code":"SUCCESS","trade_type":"JSAPI"}
+                window.WeixinJSBridge.invoke('getBrandWCPayRequest', payParams, function(res) {
+                  console.info(res);
+                  this.isPaying = false;
+                  if (res.err_msg === 'get_brand_wcpay_request:ok') {
+                    this.$toast('支付成功');
+                  } else {
+                    this.$toast('支付失败');
+                  }
+                });
+              };
+              if (typeof WeixinJSBridge == 'undefined') {
+                document.addEventListener('WeixinJSBridgeReady', () => {
+                  invodeWechatPay();
+                }, false);
+              } else {
+                invodeWechatPay();
               }
+            }).catch(err => {
+              this.isPaying = false;
             });
-          };
-          if (typeof WeixinJSBridge == 'undefined') {
-            document.addEventListener('WeixinJSBridgeReady', () => {
-              invodeWechatPay();
-            }, false);
           } else {
-            invodeWechatPay();
+            throw res.error;
           }
         }, (err) => {
+          this.isPaying = false;
           console.error(err);
+          err = err || {};
+          this.$toast(err.message || '支付失败');
         });
       }
     }
@@ -166,13 +221,13 @@ export default {
   padding: 10px;
   height: 100%;
   padding-bottom: 48px;
+  font-size: 15px;
 }
 
 .p-pay-section {
   background: #fff;
   border-radius: 4px;
   margin-bottom: 10px;
-  font-size: 16px;
   .title {
     font-size: 14px;
     color: #666;
@@ -183,7 +238,8 @@ export default {
 .p-pay-desc {
   padding: 15px;
   h2 {
-    font-size: 16px;
+    font-size: 15px;
+    line-height: 1.4;
   }
   .sku {
     margin-top: 15px;
@@ -211,13 +267,16 @@ export default {
   border-bottom: 1px solid #eee;
   display: flex;
   align-items: center;
-  font-size: 16px;
+  font-size: 15px;
   padding: 10px;
   input {
-    font-size: 16px;
+    font-size: 15px;
     margin-left: 30px;
     flex: 1;
     height: 28px;
+    outline: none;
+    border: none;
+    background: none;
   }
 
   &:last-of-type {
@@ -234,7 +293,10 @@ export default {
     margin-left: 20px;
     flex: 1;
     input {
-      font-size: 16px;
+      font-size: 14px;
+      outline: none;
+      border: none;
+      background: none;
     }
   }
   .p-pay-count-input {
@@ -292,7 +354,7 @@ export default {
 .p-pay-footer-total {
   flex: 1;
   color: #fff;
-  font-size: 16px;
+  font-size: 15px;
   text-align: center;
   line-height: 48px;
   em {
@@ -304,6 +366,42 @@ export default {
   width: 110px;
   background: $main_color;
   color: #fff;
-  font-size: 16px;
+  font-size: 15px;
+}
+
+.p-pay-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  p {
+    color: #fff;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 18px;
+  }
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  border-top-color: #eee;
+  animation: loading .8s linear infinite;
+}
+@keyframes loading {
+  from {
+      transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

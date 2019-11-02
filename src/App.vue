@@ -19,16 +19,20 @@ export default {
   },
   mounted() {
     const uid = getCookieByKey('uid');
-    console.info('uid: ', uid);
+    // TODO: 测试代码
+    // const uid = '1003';
     if (!uid) {
       if (this.$isWeixin) {
         // 跳去授权
-        window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxa8f514537d6829d0&redirect_uri=http%3A%2F%2Fshop.npnet66.com%2Fzhanchao%2Fapi%2Fweixin%2FgetUserInfo%3Furl%3Dhttp%3A%2F%2Fshop.npnet66.com%2F&response_type=code&scope=snsapi_userinfo&state=';
+        window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxa8f514537d6829d0&redirect_uri=http%3A%2F%2Fshop.npnet66.com%2Fshop%2Fapi%2Fweixin%2FgetUserInfo%3Furl%3Dhttp%3A%2F%2Fshop.npnet66.com%2F&response_type=code&scope=snsapi_userinfo&state=';
       }
     } else {
       // 获取用户信息
       getUserInfo(uid).then(r => {
         console.info(r);
+        if (!r.error) {
+          this.$store.commit('setUserInfo', r.data);
+        }
       }).catch(err => {
         console.error(err);
       });
@@ -168,6 +172,6 @@ body {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #ccc;
+  color: #555;
 }
 </style>

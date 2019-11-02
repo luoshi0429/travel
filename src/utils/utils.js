@@ -22,3 +22,7 @@ export function getCookieByKey(key) {
   }
   return tips;
 }
+
+export function isPhone(str) {
+  return /^1[3456789]\d{9}$/.test(str);
+}

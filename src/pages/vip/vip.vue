@@ -246,12 +246,12 @@ export default {
     h1 {
       font-size: 16px;
       font-weight: bold;
-      margin: 30px 0 0 0;
+      margin: 30px 0 0;
     }
     .vip-desc {
       color: #676767;
       font-size: 12px;
-      margin: 8px 0;
+      margin: 16px 0 12px;
       .highlight {
         color: $main_color;
       }
