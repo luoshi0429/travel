@@ -66,8 +66,9 @@
 </template>
 
 <script>
+/* eslint-disable quotes */
 import { mapState } from 'vuex';
-import { getProductDetail, getProductSku, confirmOrder, weixinJsapi } from '@/api';
+import { getProductDetail, getProductSku, confirmOrder, weixinJsapi, h5Pay } from '@/api';
 import { isPhone } from '@/utils/utils';
 
 export default {
@@ -149,34 +150,35 @@ export default {
       }
       // 判断是否在微信内 同时微信版本 超过5
       console.info(this.$isWeixin, this.$wxVersion);
-      if (this.$isWeixin && this.$wxVersion > 5) {
-        this.isPaying = true;
-        confirmOrder({
-          product_id: this.productId,
-          sku_id: this.skuId,
-          buy_count: this.buyCount,
-          uid: this.uid,
-          customer_name: this.name,
-          customer_mobile: this.phoneNumber
-        }).then(res => {
-          console.info(res);
-          if (res.result) {
-            console.info(this.openid, 'pay ---- openid');
-            weixinJsapi(this.openid).then(r => {
-              console.info('====', r);
+      this.isPaying = true;
+      confirmOrder({
+        product_id: this.productId,
+        sku_id: this.skuId,
+        buy_count: this.buyCount,
+        uid: this.uid,
+        customer_name: this.name,
+        customer_mobile: this.phoneNumber
+      }).then(res => {
+        console.info(res, this.openid);
+        if (res.result && res.result.status) {
+          if (this.$isWeixin) {
+            if (!this.$wxVersion > 5) {
+              this.$toast('微信版本太低，请升级');
+              return;
+            }
+            weixinJsapi({ openid: this.openid, orderId: res.result.orderId }).then(r => {
               r = r.data;
-              const payParams = {
-                appId: r.appid,
-                nonceStr: r.nonce_str,
-                timeStamp: r.timestamp,
-                package: r.package,
-                signType: 'MD5',
-                paySign: r.sign
-              };
+              // const that = this;
               const invodeWechatPay = () => {
-                //   {"timestamp":"1572227537","result_code":"SUCCESS","sign":"5660768E2E33565F0AE000BB1FBE9846","mch_id":"1481612142","prepay_id":"wx28095217311817958f09a9ef1197993500","return_msg":"OK","package":"WXPay","appid":"wxa8f514537d6829d0","nonce_str":"hvNrk3mwyNi3DoSM","return_code":"SUCCESS","trade_type":"JSAPI"}
-                window.WeixinJSBridge.invoke('getBrandWCPayRequest', payParams, function(res) {
-                  console.info(res);
+                window.WeixinJSBridge.invoke('getBrandWCPayRequest', {
+                  "appId": r.appid,
+                  "timeStamp": r.timestamp,
+                  "nonceStr": r.nonce_str,
+                  "package": 'prepay_id=' + r.prepay_id,
+                  "signType": "MD5",
+                  "paySign": r.sign
+                }, (res) => {
+                  console.info('getBrandWCPayRequest: ', res);
                   this.isPaying = false;
                   if (res.err_msg === 'get_brand_wcpay_request:ok') {
                     this.$toast('支付成功');
@@ -196,15 +198,26 @@ export default {
               this.isPaying = false;
             });
           } else {
-            throw res.error;
+            h5Pay(res.result.orderId).then(r => {
+              console.log(r);
+              if (r.result_code === 'SUCCESS') {
+                window.location.href = r.mweb_url;
+              } else {
+                throw r;
+              }
+            }).catch(err => {
+              this.$toast('支付失败');
+            });
           }
-        }, (err) => {
-          this.isPaying = false;
-          console.error(err);
-          err = err || {};
-          this.$toast(err.message || '支付失败');
-        });
-      }
+        } else {
+          throw res.error;
+        }
+      }).catch((err) => {
+        this.isPaying = false;
+        console.error(err);
+        err = err || {};
+        this.$toast(err.message || '支付失败');
+      });
     }
   }
 };

@@ -1,5 +1,5 @@
 <template>
-  <router-view/>
+  <router-view class="g-page" />
 </template>
 
 <script>
@@ -20,7 +20,7 @@ export default {
   mounted() {
     const uid = getCookieByKey('uid');
     // TODO: 测试代码
-    // const uid = '1003';
+    // const uid = '69dd4f79d42addd3';
     if (!uid) {
       if (this.$isWeixin) {
         // 跳去授权
@@ -30,8 +30,10 @@ export default {
       // 获取用户信息
       getUserInfo(uid).then(r => {
         console.info(r);
-        if (!r.error) {
+        if (!r.status !== 'error') {
           this.$store.commit('setUserInfo', r.data);
+        } else {
+          throw r;
         }
       }).catch(err => {
         console.error(err);
@@ -173,5 +175,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #555;
+  max-width: 680px;
+  margin: 0 auto;
 }
 </style>

@@ -3,6 +3,13 @@ import api from './api';
 import qs from 'qs';
 
 /**
+ * 获取首页banner商品
+ */
+export const getBannerInfo = (params) => {
+  return api.get('/shop_home/banner', { params });
+};
+
+/**
  * 获取产品列表
  * @param {Object} params
  */
@@ -44,10 +51,10 @@ export const confirmOrder = (data) => {
 
 /**
  * 订单列表接口
- * @param {String} orderIds 订单id
+ * @param {String} uid
  */
-export const getOrderList = (orderIds) => {
-  return api.get('/shop_order/getOrderList', { params: { orderIds } });
+export const getOrderList = (uid) => {
+  return api.get('/shop_order/getOrderList', { params: { uid } });
 };
 
 /**
@@ -58,6 +65,30 @@ export const getUserInfo = (uid) => {
 };
 
 // 微信jsapi支付
-export const weixinJsapi = (openid) => {
-  return axios.post('/shop/weixin/pay', qs.stringify({ openid }));
+export const weixinJsapi = (data) => {
+  return axios.post('/shop/weixin/pay', qs.stringify(data));
+};
+
+// 获取会员列表
+export const getVipList = () => {
+  return api.post('/shop_user/vip');
+};
+
+// 购买会员 uid vip_id
+export const buyVip = (data) => {
+  return api.post('/shop_user/buy_vip', qs.stringify(data));
+};
+
+// 获取验证码
+export const getSmsCode = (phone) => {
+  return api.post('/weixin/getCode', qs.stringify({ phone }));
+};
+
+// 注册
+export const registerPhone = (data) => {
+  return api.post('/weixin/login', qs.stringify(data));
+};
+
+export const h5Pay = (orderId) => {
+  return api.post('/weixinPay/pay', qs.stringify({ orderId }));
 };

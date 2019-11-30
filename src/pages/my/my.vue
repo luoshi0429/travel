@@ -1,9 +1,9 @@
 <template>
   <div class="p-my">
     <div class="p-my-header">
-      <div @click="tapHeader">
+      <div class="p-my-header__inner" @click="tapHeader">
         <img :src="userInfo.headimgurl || defaultAvatar" />
-        <p>{{ userInfo.nickname }}</p>
+        <p>{{ userInfo.nickname || userInfo.phone }}</p>
       </div>
     </div>
     <!-- <router-link to="/vip" class="p-my-vip">
@@ -46,7 +46,7 @@ export default {
   },
   computed: {
     ...mapState({
-      userInfo: state => state.user.info
+      userInfo: state => state.user.info || {}
     })
   },
   mounted() {
@@ -95,6 +95,10 @@ export default {
     margin-bottom: 10px;
     // box-shadow: 0 1px 10px #f2f2f2;
   }
+}
+
+.p-my-header__inner {
+  text-align: center;
 }
 
 .p-my-vip {

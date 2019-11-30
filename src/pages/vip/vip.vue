@@ -9,28 +9,30 @@
       <!-- <p class="desc">享受商城支付金额7%的返现!</p> -->
       <h3 class="title">话费支付</h3>
       <div class="price-block">
-        <div class="diamond">
-          <div
-            class="price-item"
-            :class="{'actived': 'c-d-1' === selectedCostPriceItemId}"
-            @click="selectCostPriceItem('c-d-1')">
-            <span class="price-title">钻石会员</span>
-            <p class="discount">7%</p>
-            <p class="discount-text">全场返现</p>
-            <strong class="price">￥20/月</strong>
+        <template v-for="(phone, index) in phoneList">
+          <div :class="phone.vip_type === 'zs' ? 'diamond' : 'gold'" :key="index">
+            <div
+              class="price-item"
+              :class="{'actived': phone.id === selectedCostPriceItemId}"
+              @click="selectCostPriceItem(phone.id)">
+              <span class="price-title">{{ phone.text }}</span>
+              <p class="discount">{{ phone.back_bv }}%</p>
+              <p class="discount-text">{{ phone.msg }}</p>
+              <strong class="price">￥{{ phone.price }}/{{ phone.month }}月</strong>
+            </div>
           </div>
-        </div>
-        <div class="gold">
-          <div
-            class="price-item"
-            :class="{'actived': 'c-g-1' === selectedCostPriceItemId}"
-            @click="selectCostPriceItem('c-g-1')">
-            <span class="price-title">黄金会员</span>
-            <p class="discount">5%</p>
-            <p class="discount-text">全场返现</p>
-            <strong class="price">￥10/月</strong>
-          </div>
-        </div>
+          <!-- <div v-else class="gold" :key="index">
+            <div
+              class="price-item"
+              :class="{'actived': 'c-g-1' === selectedCostPriceItemId}"
+              @click="selectCostPriceItem('c-g-1')">
+              <span class="price-title">黄金会员</span>
+              <p class="discount">5%</p>
+              <p class="discount-text">全场返现</p>
+              <strong class="price">￥10/月</strong>
+            </div>
+          </div> -->
+        </template>
       </div>
     </div>
     <div class="content">
@@ -45,10 +47,10 @@
             :class="{'actived': item.id === selectedWechatPriceItemId}"
             @click="selectWechatPriceItem(item)">
 
-            <span class="price-title">钻石会员</span>
-            <p class="discount">7%</p>
-            <p class="discount-text">全场返现</p>
-            <strong class="price">{{ item.price }}/月</strong>
+            <span class="price-title">{{ item.text }}</span>
+            <p class="discount">{{ item.back_bv }}%</p>
+            <p class="discount-text">{{ item.msg }}</p>
+            <strong class="price">{{ item.price }}/{{item.month}}月</strong>
           </div>
         </div>
         <div class="gold">
@@ -59,10 +61,10 @@
             :class="{'actived': item.id === selectedWechatPriceItemId}"
             @click="selectWechatPriceItem(item)">
 
-            <span class="price-title">黄金会员</span>
-            <p class="discount">5%</p>
-            <p class="discount-text">全场返现</p>
-            <strong class="price">{{ item.price }}/月</strong>
+            <span class="price-title">{{ item.text }}</span>
+            <p class="discount">{{ item.back_bv }}%</p>
+            <p class="discount-text">{{ item.msg }}</p>
+            <strong class="price">{{ item.price}}/{{ item.month }}月</strong>
           </div>
         </div>
       </div>
@@ -111,7 +113,7 @@
     </div>
     <div class="footer">
       <label class="rule-label" for="rule">
-        <input id="rule" type="checkbox" />
+        <input id="rule" type="checkbox" v-model="agreed" />
         <p>同意<span @click.prevent="showVipPolicyDialog">《会员协议》</span></p>
       </label>
       <button class="buy-button" @click="buy">购买</button>
@@ -120,10 +122,15 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+import { getVipList, buyVip } from '@/api';
+
 export default {
   data() {
     return {
+      agreed: false,
       currentTab: 'gold',
+      phoneList: [],
       goldPriceList: [
         {
           id: 'g1',
@@ -195,7 +202,48 @@ export default {
       vipPolicyDialogVisible: false
     };
   },
+  computed: {
+    ...mapState({
+      uid: state => state.user.uid
+    })
+  },
+  filters: {
+    dateUnit(val) {
+      if (val === 1) return '月';
+      switch (val) {
+        case 1:
+          return '月';
+        case 3:
+          return '季';
+        case 6:
+          return '半年';
+        case 12:
+          return '年';
+        default:
+          return '';
+      }
+    }
+  },
   mounted() {
+    getVipList().then(r => {
+      console.info('R');
+      r = r[0];
+      if (r.status === 'ok') {
+        r = r.data;
+        this.phoneList = r.phone;
+        const goldPriceList = [];
+        const diamondPriceList = [];
+        r.wexin.forEach(item => {
+          if (item.vip_type === 'zs') {
+            diamondPriceList.push(item);
+          } else {
+            goldPriceList.push(item);
+          }
+        });
+        this.diamondPriceList = diamondPriceList;
+        this.goldPriceList = goldPriceList;
+      }
+    });
   },
   methods: {
     selectWechatPriceItem(item) {
@@ -223,9 +271,49 @@ export default {
       document.body.style.overflow = 'auto';
     },
     buy() {
-      // xx
-      this.$router.push({
-        name: 'vipSuccess'
+      if (!this.agreed) {
+        this.$toast('请先同意会员协议');
+        return;
+      }
+      if (!this.selectedWechatPriceItemId) {
+        this.$toast('请先选择购买类型');
+        return;
+      }
+      buyVip({
+        uid: this.uid,
+        vip_id: this.selectedWechatPriceItemId
+      }).then(r => {
+        console.info(r);
+        r = r[0];
+        const invodeWechatPay = () => {
+          window.WeixinJSBridge.invoke('getBrandWCPayRequest', {
+            'appId': r.appid,
+            'timeStamp': r.timestamp,
+            'nonceStr': r.nonce_str,
+            'package': 'prepay_id=' + r.prepay_id,
+            'signType': 'MD5',
+            'paySign': r.sign
+          }, (res) => {
+            console.info('getBrandWCPayRequest: ', res);
+            this.isPaying = false;
+            if (res.err_msg === 'get_brand_wcpay_request:ok') {
+              this.$toast('支付成功');
+
+              this.$router.push({
+                name: 'vipSuccess'
+              });
+            } else {
+              this.$toast('支付失败');
+            }
+          });
+        };
+        if (typeof WeixinJSBridge == 'undefined') {
+          document.addEventListener('WeixinJSBridgeReady', () => {
+            invodeWechatPay();
+          }, false);
+        } else {
+          invodeWechatPay();
+        }
       });
     }
   }

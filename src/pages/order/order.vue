@@ -15,6 +15,7 @@
 <script>
 import { getOrderList } from '@/api';
 import OrderItem from '@/components/order-item/order-item';
+import { mapState } from 'vuex';
 
 export default {
   components: { OrderItem },
@@ -23,12 +24,26 @@ export default {
       orderList: []
     };
   },
+  computed: {
+    ...mapState({
+      uid: state => state.user.uid
+    })
+  },
+  watch: {
+    uid: {
+      immediate: true,
+      handler(uid) {
+        if (!uid) return;
+        getOrderList(this.uid).then(r => {
+          console.info(r);
+        }).catch(err => {
+          console.error(err);
+        });
+      }
+    }
+  },
   mounted() {
-    getOrderList().then(r => {
-      console.info(r);
-    }).catch(err => {
-      console.error(err);
-    });
+
   }
 };
 </script>

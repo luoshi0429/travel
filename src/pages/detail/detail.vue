@@ -13,13 +13,10 @@
             <div class="p-detail-img-list">
               <!-- 图片轮播图预留位置 -->
               <swiper v-if="detail.img_list && detail.img_list.length > 0" :options="swiperOption" ref="mySwiper">
-                <!-- slides -->
                 <swiper-slide v-for="(img, index) in detail.img_list" :key="index">
                   <img class="p-detail-banner__img" :src="img" />
                 </swiper-slide>
-                <!-- Optional controls -->
                 <div class="swiper-pagination "  slot="pagination"></div>
-                <!-- <div class="swiper-scrollbar"   slot="scrollbar"></div> -->
               </swiper>
               <img v-else :src="detail.img_main" class="p-detail-banner__img" />
             </div>
@@ -30,9 +27,9 @@
               <p class="sale"><span>已售：{{ currentSku.saled_num }}</span><span>库存：{{ currentSku.quantity }}</span></p>
             </div>
           </div>
-          <div class="p-detail-location">
+          <div class="p-detail-location" v-if="detail.product_addr">
             <div><i class="iconfont icon-location1"></i> <span>{{ detail.product_addr }}</span></div>
-            <i class="iconfont icon-icon-test3"></i>
+            <!-- <i class="iconfont icon-icon-test3"></i> -->
           </div>
           <div class="p-detail-sku">
             <div class="p-detail-sku__left">选择规格</div>
@@ -67,14 +64,14 @@
           </div>
         </div>
       </div>
+      <div class="p-detail-buy-section">
+        <div class="p-detail-icon-btn" @click="tapHome"><i class="iconfont icon-shouye"></i><p>首页</p></div>
+        <!-- <div class="p-detail-icon-btn" @click="tapCustomerService"><i class="iconfont icon-kefu"></i><p>客服</p></div> -->
+        <button @click="tapBeVip" class="p-detail-vip-btn">会员购买<span>(最多返{{ (currentSku.price ? currentSku.price * 0.07 : 0).toFixed(0) }}元)</span></button>
+        <button @click="tapBuy" class="p-detail-buy-btn">立即抢购</button>
+      </div>
+      <button @click="tapShowPoster" class="p-detail-poster-btn" v-if="detail.img_poster">分享海报</button>
     </template>
-    <div class="p-detail-buy-section">
-      <div class="p-detail-icon-btn" @click="tapHome"><i class="iconfont icon-shouye"></i><p>首页</p></div>
-      <!-- <div class="p-detail-icon-btn" @click="tapCustomerService"><i class="iconfont icon-kefu"></i><p>客服</p></div> -->
-      <button @click="tapBeVip" class="p-detail-vip-btn">成为会员<span>(返{{ (currentSku.price ? currentSku.price * 0.07 : 0).toFixed(0) }}元)</span></button>
-      <button @click="tapBuy" class="p-detail-buy-btn">立即抢购</button>
-    </div>
-    <button @click="tapShowPoster" class="p-detail-poster-btn" v-if="detail.img_poster">分享海报</button>
     <poster :imgSrc="detail.img_poster" :show="showPoster" @tapPoster="handleTapPoster" />
   </div>
 </template>
@@ -84,6 +81,7 @@ import { mapState } from 'vuex';
 import { getProductDetail, getProductSku } from '@/api';
 import { swiper, swiperSlide } from 'vue-awesome-swiper';
 import Poster from '@/components/poster/poster';
+import cities from '@/assets/cities';
 
 export default {
   components: {
@@ -110,11 +108,6 @@ export default {
         initialSlide: 0,
         // 自动播放
         autoplay: true,
-        // autoplay: {
-        //     delay: 3000,
-        //     stopOnLastSlide: false,
-        //     disableOnInteraction: true,
-        // },
         // 设置轮播
         effect: 'slide',
         // 滑动速度
@@ -126,15 +119,8 @@ export default {
         // 滑动之后回调函数
         on: {
           slideChangeTransitionEnd: function() {
-            // console.log(this.activeIndex);//切换结束时，告诉我现在是第几个slide
           },
         },
-        // 左右点击
-        // navigation: {
-        //   nextEl: '.swiper-button-next',
-        //   prevEl: '.swiper-button-prev',
-        // },
-        // 分页器设置
         pagination: {
           el: '.swiper-pagination',
           clickable: false
@@ -148,7 +134,6 @@ export default {
     })
   },
   mounted() {
-    // this.productId = this.$route.params.id;
     this.requestDetail().then(() => {
       this.loading = false;
     }).catch(() => {
@@ -157,10 +142,16 @@ export default {
   },
   methods: {
     requestDetail() {
-      // const id = this.$route.params.id;
       return getProductDetail(this.productId)
         .then(r => {
           console.log(r);
+          if (!r.result) {
+            throw r.error;
+          }
+          // if (!r.result.prodcut_addr) {
+          //   const city = this.getCityById(r.result.city);
+          //   r.result.productAddress = '';
+          // }
           this.detail = r.result;
           const skugrup = r.result.skugrups[0] || {};
           this.skugrup = skugrup;
@@ -169,6 +160,21 @@ export default {
           console.error(err);
         });
     },
+    getCityById(cityId) {
+      let result = {};
+      for (let i = 0; i < cities.length; i++) {
+        const cityL = cities[i];
+        for (let j = 0; j < cityL.cities.length; j++) {
+          const city = cityL.cities[j];
+          if (city.cityId === cityId) {
+            result = city;
+            break;
+          }
+        }
+      }
+      return result;
+    },
+
     requestProductSku() {
       getProductSku()
         .then(r => {
@@ -195,6 +201,13 @@ export default {
       // 是否有uid
       if (!this.uid) {
         // 授权
+        if (this.$isWeixin) {
+          window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxa8f514537d6829d0&redirect_uri=http%3A%2F%2Fshop.npnet66.com%2Fshop%2Fapi%2Fweixin%2FgetUserInfo%3Furl%3Dhttp%3A%2F%2Fshop.npnet66.com%2F&response_type=code&scope=snsapi_userinfo&state=';
+        } else {
+          const path = encodeURIComponent(this.$route.fullPath);
+          this.$router.push(`/register?from=${path}`);
+        }
+        return;
       }
       // 是否有手机号码
       // 跳转到手机登录页
@@ -388,8 +401,8 @@ export default {
 }
 
 .p-detail-sku {
-  border-top: 20px solid #eee;
-  border-bottom: 20px solid #eee;
+  border-top: 10px solid #eee;
+  border-bottom: 10px solid #eee;
   display: flex;
   padding: 10px 15px;
   &__left {
@@ -441,5 +454,11 @@ export default {
   &:last-of-type {
     border-bottom: none;
   }
+}
+</style>
+
+<style lang="scss">
+.p-detail-img-list .swiper-pagination-bullet-active {
+  background: #fc6d3c;
 }
 </style>

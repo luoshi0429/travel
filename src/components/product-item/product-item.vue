@@ -1,5 +1,5 @@
 <template>
-  <div class="c-product-item">
+  <div class="c-product-item" @click="tapItem">
     <div class="c-product-item__top">
       <img :src="product.img_main || product.img_main_small" />
       <span class="c-product-item__top__sale">已售{{ product.saled_num }}</span>
@@ -11,7 +11,7 @@
       <h4>{{ product.name }}</h4>
       <div class="c-product-item__bottom__price">
         <p>¥<span>{{ product.price }}</span></p>
-        <button class="btn" @tap="tapPoster">海报</button>
+        <button v-if="product.img_poster" class="btn" @click.stop="tapPoster">海报</button>
       </div>
     </div>
   </div>
@@ -32,7 +32,7 @@ export default {
     product: {
       handler(val) {
         if (!val.end_time) return;
-        const endDate = new Date(val.end_time.replace('-', '/')).getTime();
+        const endDate = new Date(val.end_time.replace(/-/g, '/')).getTime();
         if (this.countTimer) {
           clearInterval(this.countTimer);
           this.countTimer = null;
@@ -68,6 +68,9 @@ export default {
   },
 
   methods: {
+    tapItem() {
+      this.$emit('tapItem', this.product);
+    },
     tapPoster() {
       this.$emit('tapPoster', this.product.img_poster);
     },
