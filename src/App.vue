@@ -4,8 +4,8 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import { getCookieByKey } from '@/utils/utils';
-import { getUserInfo } from '@/api';
+// import { getCookieByKey } from '@/utils/utils';
+// import { getUserInfo } from '@/api';
 import cities from '@/assets/cities.js';
 
 export default {
@@ -14,33 +14,34 @@ export default {
   },
   computed: {
     ...mapState({
-      selectedAddress: state => state.user.selectedAddress
+      selectedAddress: state => state.user.selectedAddress,
+      uid: state => state.user.uid
     })
   },
   mounted() {
-    const uid = getCookieByKey('uid');
-    // TODO: 测试代码
-    // const uid = '69dd4f79d42addd3';
-    if (!uid) {
-      if (this.$isWeixin) {
-        // 跳去授权
-        window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxa8f514537d6829d0&redirect_uri=http%3A%2F%2Fshop.npnet66.com%2Fshop%2Fapi%2Fweixin%2FgetUserInfo%3Furl%3Dhttp%3A%2F%2Fshop.npnet66.com%2F&response_type=code&scope=snsapi_userinfo&state=';
-      }
-    } else {
-      // 获取用户信息
-      getUserInfo(uid).then(r => {
-        console.info(r);
-        if (!r.status !== 'error') {
-          this.$store.commit('setUserInfo', r.data);
-        } else {
-          throw r;
-        }
-      }).catch(err => {
-        console.error(err);
-      });
-    }
-    // 保存uid
-    this.$store.dispatch('saveUid', uid);
+    // const uid = getCookieByKey('uid');
+    // // TODO: 测试代码
+    // // const uid = '69dd4f79d42addd3';
+    // if (!uid) {
+    //   if (this.$isWeixin) {
+    //     // 跳去授权
+    //     window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxa8f514537d6829d0&redirect_uri=http%3A%2F%2Fshop.npnet66.com%2Fshop%2Fapi%2Fweixin%2FgetUserInfo%3Furl%3Dhttp%3A%2F%2Fshop.npnet66.com%2F&response_type=code&scope=snsapi_userinfo&state=';
+    //   }
+    // } else {
+    //   // 获取用户信息
+    //   getUserInfo(uid).then(r => {
+    //     console.info(r);
+    //     if (!r.status !== 'error') {
+    //       this.$store.commit('setUserInfo', r.data);
+    //     } else {
+    //       throw r;
+    //     }
+    //   }).catch(err => {
+    //     console.error(err);
+    //   });
+    // }
+    // // 保存uid
+    // this.$store.dispatch('saveUid', uid);
 
     if (!this.selectedAddress.city) {
       // 获取当前城市
@@ -94,7 +95,6 @@ export default {
       }
     },
     getLocationSuccessCallback(position) {
-      console.info('####', position);
       // 经度
       const lng = position.coords.longitude || '';
       // 纬度
@@ -108,7 +108,6 @@ export default {
       myGeo.getLocation(new window.BMap.Point(lng, lat), (result) => {
         // 如果解析成功，则回调函数的参数为GeocoderResult对象，否则为null。
         if (result) {
-          console.info(result);
           const addrComp = result.addressComponents;
           const address = this.parseCityInfo(addrComp.province, addrComp.city);
           if (address) {
@@ -125,7 +124,6 @@ export default {
 
     parseCityInfo(province, curCity) {
       // 获取首字母
-      console.info(province, curCity);
       const letter = window.pinyinUtil.getFirstLetter(curCity)[0];
       let inLetterCities = [];
       for (let i = 0; i < cities.length; i++) {

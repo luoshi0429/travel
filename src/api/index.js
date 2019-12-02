@@ -10,6 +10,13 @@ export const getBannerInfo = (params) => {
 };
 
 /**
+ * 获取首页分类
+ */
+export const getHomeType = (params) => {
+  return api.get('/shop_home/type', { params });
+};
+
+/**
  * 获取产品列表
  * @param {Object} params
  */

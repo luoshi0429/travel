@@ -18,7 +18,6 @@ export default {
   },
   actions: {
     updateAddress({ commit }, address) {
-      console.info('-----', address);
       commit(types.UPDATE_ADDRESS, address);
       commit(types.SET_CURRENT_ADDRESS, address);
     },
@@ -40,7 +39,6 @@ export default {
       state.isWeixin = isWeixin;
     },
     setUserInfo(state, info) {
-      console.info('set user info: ', info);
       state.info = info;
     },
     [types.SET_CURRENT_ADDRESS](state, address) {

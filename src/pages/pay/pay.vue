@@ -196,6 +196,7 @@ export default {
               }
             }).catch(err => {
               this.isPaying = false;
+              throw err;
             });
           } else {
             h5Pay(res.result.orderId).then(r => {
@@ -206,7 +207,7 @@ export default {
                 throw r;
               }
             }).catch(err => {
-              this.$toast('支付失败');
+              throw err;
             });
           }
         } else {

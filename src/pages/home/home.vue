@@ -20,6 +20,24 @@
           </swiper-slide>
         </swiper>
       </div>
+      <div class="c-home-type">
+        <div class="c-home-item" @click="tapType('new')">
+          <img src="../../assets/images/zuixin.jpg" />
+          <p>最新</p>
+        </div>
+        <div class="c-home-item" @click="tapType('food')">
+          <img src="../../assets/images/meishi.jpg" />
+          <p>美食</p>
+        </div>
+        <div class="c-home-item" @click="tapType('scenic')">
+          <img src="../../assets/images/jingqu.jpg" />
+          <p>景区</p>
+        </div>
+        <div class="c-home-item" @click="tapType('hotel')">
+          <img src="../../assets/images/jiudian.jpg" />
+          <p>酒店</p>
+        </div>
+      </div>
       <template v-if="!loading">
         <div class="c-home-product__list" v-if="productList.length > 0" @scroll="handleScroll">
           <product-item
@@ -44,7 +62,7 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import { getProductList, getBannerInfo } from '@/api';
+import { getProductList, getBannerInfo, getHomeType } from '@/api';
 import ProductItem from '@/components/product-item/product-item';
 import Poster from '@/components/poster/poster';
 import { swiper, swiperSlide } from 'vue-awesome-swiper';
@@ -158,6 +176,19 @@ export default {
         console.error(err);
       });
     },
+    requestType() {
+      return getHomeType({
+        province: this.selectedAddress.pvovinceId,
+        city: this.selectedAddress.cityId,
+      }).then(r => {
+        console.info('type info: ', r);
+        if (r.status === 'ok') {
+          this.bannerList = r.data.result.result.rows;
+        }
+      }).catch(err => {
+        console.error(err);
+      });
+    },
     requestProductList(data) {
       return getProductList({
         province: this.selectedAddress.pvovinceId,
@@ -182,7 +213,6 @@ export default {
       this.$router.push({ name: 'detail', params: { id: banner.id } });
     },
     tapProduct(product) {
-      // this.$router.push(`/detail/${product.id}`);
       this.$router.push({ name: 'detail', params: { id: product.id } });
     },
 
@@ -215,6 +245,9 @@ export default {
     },
     handleTapPoster() {
       this.showPoster = false;
+    },
+    tapType(type) {
+      this.$router.push(`/product-list?type=${type}`);
     }
   }
 };
@@ -284,7 +317,59 @@ export default {
   background-repeat: no-repeat;
   background-size: cover;
 }
+@media screen and (min-width: 320px) {
+  .p-home-banner__img {
+    height: 160px;
+  }
+}
+@media screen and (min-width: 375px) {
+  .p-home-banner__img {
+    height: 170px;
+  }
+}
 
+@media screen and (min-width: 414px) {
+  .p-home-banner__img {
+    height: 200px;
+  }
+}
+
+@media screen and (min-width: 500px) {
+  .p-home-banner__img {
+    height: 220px;
+  }
+}
+
+@media screen and (min-width: 580px) {
+  .p-home-banner__img {
+    height: 240px;
+  }
+}
+
+@media screen and (min-width: 680px) {
+  .p-home-banner__img {
+    height: 280px;
+  }
+}
+.c-home-type {
+  padding: 16px 0;
+  width: 100%;
+  display: flex;
+  .c-home-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    img {
+      width: 46%;
+      margin-bottom: 10px;
+    }
+    p {
+      font-size: 13px;
+    }
+  }
+}
 .c-home-product__list {
   border-top: 10px solid #eee;
   padding: 20px 20px 0;

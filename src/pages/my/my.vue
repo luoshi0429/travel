@@ -3,12 +3,10 @@
     <div class="p-my-header">
       <div class="p-my-header__inner" @click="tapHeader">
         <img :src="userInfo.headimgurl || defaultAvatar" />
-        <p>{{ userInfo.nickname || userInfo.phone }}</p>
+        <p>{{ userInfo.nickname || userInfo.phone }} <i v-if="!!userInfo.vip" class="icon iconfont icon-vip1"></i></p>
+        <p v-if="!!userInfo.vip">{{ userInfo.vip_type === 'hj' ? '黄金会员' : '钻石会员' }}至：{{ userInfo.vip_date }}</p>
       </div>
     </div>
-    <!-- <router-link to="/vip" class="p-my-vip">
-      成为会员 <span>开通就省钱，下单就返现</span>
-    </router-link> -->
     <div class="p-my-cells">
       <router-link
         :to="cell.path"
@@ -99,6 +97,9 @@ export default {
 
 .p-my-header__inner {
   text-align: center;
+  .icon-vip1 {
+    font-size: 18px;
+  }
 }
 
 .p-my-vip {

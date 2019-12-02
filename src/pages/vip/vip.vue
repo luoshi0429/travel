@@ -18,25 +18,13 @@
               <span class="price-title">{{ phone.text }}</span>
               <p class="discount">{{ phone.back_bv }}%</p>
               <p class="discount-text">{{ phone.msg }}</p>
-              <strong class="price">￥{{ phone.price }}/{{ phone.month }}月</strong>
+              <p class="price">￥{{ phone.price }}/{{ phone.month }}月</p>
             </div>
           </div>
-          <!-- <div v-else class="gold" :key="index">
-            <div
-              class="price-item"
-              :class="{'actived': 'c-g-1' === selectedCostPriceItemId}"
-              @click="selectCostPriceItem('c-g-1')">
-              <span class="price-title">黄金会员</span>
-              <p class="discount">5%</p>
-              <p class="discount-text">全场返现</p>
-              <strong class="price">￥10/月</strong>
-            </div>
-          </div> -->
         </template>
       </div>
     </div>
-    <div class="content">
-      <!-- <p class="desc">享受商城支付金额7%的返现!</p> -->
+    <div class="content" v-if="$isWeixin">
       <h3 class="title">微信支付</h3>
       <div class="price-block wechat">
         <div class="diamond">
@@ -50,7 +38,7 @@
             <span class="price-title">{{ item.text }}</span>
             <p class="discount">{{ item.back_bv }}%</p>
             <p class="discount-text">{{ item.msg }}</p>
-            <strong class="price">{{ item.price }}/{{item.month}}月</strong>
+            <p class="price">{{ item.price }}/{{item.month}}月</p>
           </div>
         </div>
         <div class="gold">
@@ -73,7 +61,8 @@
       <div class="mask"></div>
       <div class="dialog-content">
         <p class="buy-title">订购须知:</p>
-        <span class="close" @click="hideVipRuleDialog">关闭</span>
+        <!-- <span class="close" @click="hideVipRuleDialog">关闭</span> -->
+        <i class="icon iconfont icon-baseline-close-px close" @click="hideVipRuleDialog"></i>
         <ol class="buy-tips-list">
           <li>会员有效期内的订单为有效返现订单,且每个订单只返现一次.</li>
           <li>返现规则:会员账号必须绑定微信号,用绑定账号的微信号,关注公众号:"涅槃课堂",提供有效订单编号截图以及微信收款二维码或支付宝账号</li>
@@ -86,7 +75,7 @@
     <div class="vip-policy-dialog-wrapper" v-show="vipPolicyDialogVisible">
       <div class="mask"></div>
       <div class="dialog-content">
-        <span class="close" @click="hideVipPolicyDialog">关闭</span>
+        <i class="icon iconfont icon-baseline-close-px close" @click="hideVipPolicyDialog"></i>
         <div class="scroll-wrapper">
           <p class="dialog-title">会员协议</p>
           <div class="policy-content">
@@ -114,9 +103,9 @@
     <div class="footer">
       <label class="rule-label" for="rule">
         <input id="rule" type="checkbox" v-model="agreed" />
-        <p>同意<span @click.prevent="showVipPolicyDialog">《会员协议》</span></p>
+        <p>同意  <span @click.prevent="showVipPolicyDialog">《会员协议》</span></p>
       </label>
-      <button class="buy-button" @click="buy">购买</button>
+      <button class="buy-button" :disabled="!canBuy" @click="buy">购买</button>
     </div>
   </div>
 </template>
@@ -131,70 +120,8 @@ export default {
       agreed: false,
       currentTab: 'gold',
       phoneList: [],
-      goldPriceList: [
-        {
-          id: 'g1',
-          title: '连续包月',
-          price: '￥10',
-          tips: '享受商城支付金额5%的返现!'
-        },
-        {
-          id: 'g2',
-          title: '12个月',
-          price: '￥105',
-          tips: '享受商城支付金额5%的返现!'
-        },
-        {
-          id: 'g3',
-          title: '6个月',
-          price: '￥55',
-          tips: '享受商城支付金额5%的返现!'
-        },
-        {
-          id: 'g4',
-          title: '3个月',
-          price: '￥30',
-          tips: '享受商城支付金额5%的返现!'
-        },
-        {
-          id: 'g5',
-          title: '1个月',
-          price: '￥10',
-          tips: '享受商城支付金额5%的返现!'
-        },
-      ],
-      diamondPriceList: [
-        {
-          id: 'd1',
-          title: '连续包月',
-          price: '￥20',
-          tips: '享受商城支付金额7%的返现!'
-        },
-        {
-          id: 'd2',
-          title: '12个月',
-          price: '￥210',
-          tips: '享受商城支付金额7%的返现!'
-        },
-        {
-          id: 'd3',
-          title: '6个月',
-          price: '￥110',
-          tips: '享受商城支付金额7%的返现!'
-        },
-        {
-          id: 'd4',
-          title: '3个月',
-          price: '￥60',
-          tips: '享受商城支付金额7%的返现!'
-        },
-        {
-          id: 'd5',
-          title: '1个月',
-          price: '￥20',
-          tips: '享受商城支付金额7%的返现!'
-        },
-      ],
+      goldPriceList: [],
+      diamondPriceList: [],
       currentPriceList: [],
       selectedWechatPriceItemId: 0,
       selectedCostPriceItemId: 0,
@@ -205,7 +132,10 @@ export default {
   computed: {
     ...mapState({
       uid: state => state.user.uid
-    })
+    }),
+    canBuy() {
+      return this.agreed && (this.selectedWechatPriceItemId || this.selectedCostPriceItemId);
+    }
   },
   filters: {
     dateUnit(val) {
@@ -271,12 +201,19 @@ export default {
       document.body.style.overflow = 'auto';
     },
     buy() {
-      if (!this.agreed) {
-        this.$toast('请先同意会员协议');
+      // 判断uid是否有值
+      if (!this.uid) {
+        if (this.$isWeixin) {
+          // 跳去授权
+          window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxa8f514537d6829d0&redirect_uri=http%3A%2F%2Fshop.npnet66.com%2Fshop%2Fapi%2Fweixin%2FgetUserInfo%3Furl%3Dhttp%3A%2F%2Fshop.npnet66.com%2F&response_type=code&scope=snsapi_userinfo&state=';
+        } else {
+          const path = encodeURIComponent(this.$route.fullPath);
+          this.$router.push(`/register?from=${path}`);
+        }
         return;
       }
-      if (!this.selectedWechatPriceItemId) {
-        this.$toast('请先选择购买类型');
+      if (this.selectedCostPriceItemId) {
+        this.$toast('暂时不支持话费支付');
         return;
       }
       buyVip({
@@ -284,7 +221,7 @@ export default {
         vip_id: this.selectedWechatPriceItemId
       }).then(r => {
         console.info(r);
-        r = r[0];
+        // r = r[0];
         const invodeWechatPay = () => {
           window.WeixinJSBridge.invoke('getBrandWCPayRequest', {
             'appId': r.appid,
@@ -324,7 +261,7 @@ export default {
 @import '../../styles/common.scss';
 .p-vip {
   font-size: 16px;
-  padding: 0 12px 30px 12px;
+  padding: 24px 12px;
   .vip-header {
     border-bottom: 1px solid #eee;
     padding-bottom: 20px;
@@ -332,14 +269,15 @@ export default {
     font-size: 0;
     color: #333;
     h1 {
-      font-size: 16px;
+      font-size: 22px;
       font-weight: bold;
-      margin: 30px 0 0;
+      // margin: 30px 0 0;
     }
     .vip-desc {
       color: #676767;
-      font-size: 12px;
-      margin: 16px 0 12px;
+      font-size: 16px;
+      line-height: 20px;
+      margin: 12px 0;
       .highlight {
         color: $main_color;
       }
@@ -394,6 +332,7 @@ export default {
         }
         .price {
           color: $main_color;
+          font-weight: 500;
         }
         .price-item {
           &.actived {
@@ -438,9 +377,9 @@ export default {
           color: #999;
         }
         .discount {
-          font-size: 12px;
-          margin: 5px 0;
-          font-weight: bold;
+          font-size: 18px;
+          margin: 6px 0;
+          font-weight: 500;
         }
         .price {
           font-size: 16px;
@@ -465,7 +404,7 @@ export default {
       z-index: 2;
       background: #fff;
       width: 80%;
-      padding: 30px 20px;
+      padding: 20px;
       border-radius: 5px;
       top: 50%;
       left: 50%;
@@ -474,13 +413,6 @@ export default {
         font-size: 16px;
         font-weight: bold;
         margin-bottom: 12px;
-      }
-      .close {
-        position: absolute;
-        top: -20px;
-        right: 5px;
-        color: #fff;
-        font-size: 12px;
       }
       .buy-tips-list {
         list-style-type: decimal;
@@ -513,6 +445,7 @@ export default {
       z-index: 2;
       background: #fff;
       width: 80%;
+      max-height: 90%;
       padding: 30px 0;
       border-radius: 5px;
       top: 50%;
@@ -529,13 +462,13 @@ export default {
         text-align: center;
         margin-bottom: 12px;
       }
-      .close {
-        position: absolute;
-        top: -20px;
-        right: 5px;
-        color: #fff;
-        font-size: 12px;
-      }
+      // .close {
+      //   position: absolute;
+      //   top: -20px;
+      //   right: 5px;
+      //   color: #fff;
+      //   font-size: 12px;
+      // }
       .policy-content {
         h6 {
           font-size: 16px;
@@ -587,7 +520,19 @@ export default {
       font-size: 18px;
       border-radius: 2px;
       bottom: 0px;
+      &:disabled {
+        background: #ddd;
+      }
     }
+  }
+}
+
+.dialog-content {
+  .close {
+    position: absolute;
+    top: 12px;
+    right: 10px;
+    font-size: 20px;
   }
 }
 

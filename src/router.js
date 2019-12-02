@@ -69,6 +69,11 @@ const router = new Router({
       path: '/register',
       name: 'register',
       component: () => import('@/pages/register/register')
+    },
+    {
+      path: '/product-list',
+      name: 'productList',
+      component: () => import('@/pages/product-list/product-list')
     }
   ]
 });
