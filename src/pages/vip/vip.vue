@@ -1,5 +1,12 @@
 <template>
   <div class="p-vip">
+    <div v-if="!!userInfo.vip" class="p-vip-me">
+      <img :src="userInfo.headimgurl || defaultAvatar" />
+      <div class="p-vip-me__right">
+        <p>{{ userInfo.nickname || userInfo.phone }} <i v-if="!!userInfo.vip" class="icon iconfont icon-vip1"></i></p>
+        <p v-if="!!userInfo.vip">{{ userInfo.vip_type === 'hj' ? '黄金会员' : '钻石会员' }}至：{{ userInfo.vip_date }}</p>
+      </div>
+    </div>
     <div class="vip-header">
       <h1>开通就省钱，下单就返现。 </h1>
       <p class="vip-desc">"钻石"会员全场<span class="highlight">返现7%</span>！"⻩⾦"会员全场<span class="highlight">返现5%</span>！</p>
@@ -18,7 +25,7 @@
               <span class="price-title">{{ phone.text }}</span>
               <p class="discount">{{ phone.back_bv }}%</p>
               <p class="discount-text">{{ phone.msg }}</p>
-              <p class="price">￥{{ phone.price }}/{{ phone.month }}月</p>
+              <p class="price">￥{{ phone.price }}/{{ phone.month | dateUnit }}</p>
             </div>
           </div>
         </template>
@@ -52,7 +59,7 @@
             <span class="price-title">{{ item.text }}</span>
             <p class="discount">{{ item.back_bv }}%</p>
             <p class="discount-text">{{ item.msg }}</p>
-            <strong class="price">{{ item.price}}/{{ item.month }}月</strong>
+            <strong class="price">{{ item.price}}/{{ item.month | dateUnit }}</strong>
           </div>
         </div>
       </div>
@@ -113,6 +120,7 @@
 <script>
 import { mapState } from 'vuex';
 import { getVipList, buyVip } from '@/api';
+import defaultAvatar from '@/assets/images/default-avatar.png';
 
 export default {
   data() {
@@ -126,12 +134,14 @@ export default {
       selectedWechatPriceItemId: 0,
       selectedCostPriceItemId: 0,
       ruleDialogVisible: false,
-      vipPolicyDialogVisible: false
+      vipPolicyDialogVisible: false,
+      defaultAvatar
     };
   },
   computed: {
     ...mapState({
-      uid: state => state.user.uid
+      uid: state => state.user.uid,
+      userInfo: state => state.user.info || {}
     }),
     canBuy() {
       return this.agreed && (this.selectedWechatPriceItemId || this.selectedCostPriceItemId);
@@ -139,19 +149,24 @@ export default {
   },
   filters: {
     dateUnit(val) {
-      if (val === 1) return '月';
+      let unit = '';
       switch (val) {
         case 1:
-          return '月';
+          unit = '月';
+          break;
         case 3:
-          return '季';
+          unit = '季';
+          break;
         case 6:
-          return '半年';
+          unit = '半年';
+          break;
         case 12:
-          return '年';
+          unit = '年';
+          break;
         default:
-          return '';
+          unit = '';
       }
+      return unit;
     }
   },
   mounted() {
@@ -522,6 +537,33 @@ export default {
       bottom: 0px;
       &:disabled {
         background: #ddd;
+      }
+    }
+  }
+}
+
+.p-vip-me {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  img {
+    width: 60px;
+    height: 60px;
+    border-radius: 100%;
+  }
+  .icon-vip1 {
+    font-size: 18px;
+    color: #fc6d3c;
+  }
+  &__right {
+    flex: 1;
+    margin-left: 12px;
+    p {
+      margin-bottom: 4px;
+      font-size: 15px;
+      &:last-of-type {
+        font-size: 14px;
+        color: #999;
       }
     }
   }

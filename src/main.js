@@ -21,8 +21,10 @@ Vue.use(Toast, {
   width: '150px'
 });
 
-new VConsole();
-console.info('hello vconsole');
+if (process.env.NODE_ENV === 'development') {
+  new VConsole();
+  console.info('hello vconsole');
+}
 
 // 判断是否为微信内
 const isWeixin = /micromessenger/i.test(navigator.userAgent);
@@ -43,9 +45,9 @@ console.info('in wechat: ', Vue.prototype.$isWeixin, Vue.prototype.$wxVersion);
 Vue.config.productionTip = false;
 
 router.beforeEach((to, from, next) => {
-  // const uid = getCookieByKey('uid');
+  const uid = getCookieByKey('uid');
   // TODO: 测试代码
-  const uid = getCookieByKey('uid'); // || 'abda333dc62a6cfc';
+  // const uid = 'abda333dc62a6cfc';
   console.info('---------uid', uid);
   if (store.state.user.uid === uid) {
     next();
@@ -61,6 +63,9 @@ router.beforeEach((to, from, next) => {
     getUserInfo(uid).then(r => {
       console.info(router);
       if (!r.status !== 'error') {
+        // TODO: 测试代码
+        // r.data.vip = 'zs';
+        // r.data.vip_date = '2020-12-20';
         store.commit('setUserInfo', r.data);
       } else {
         throw r;

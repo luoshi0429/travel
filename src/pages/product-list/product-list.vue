@@ -18,6 +18,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import { getHomeType } from '@/api';
 import ProductItem from '@/components/product-item/product-item';
 import Poster from '@/components/poster/poster';
@@ -38,14 +39,21 @@ export default {
       type: this.$route.query.type
     };
   },
+  computed: {
+    ...mapState({
+      selectedAddress: state => state.user.selectedAddress
+    })
+  },
   mounted() {
-    console.info(this.type);
     // 获取type
-    this.getHomeType();
+    this.getHomeTypeData();
   },
   methods: {
-    getHomeType() {
-      getHomeType().then(r => {
+    getHomeTypeData() {
+      getHomeType({
+        province: this.selectedAddress.pvovinceId,
+        city: this.selectedAddress.cityId,
+      }).then(r => {
         if (r.status === 'ok') {
           this.productList = r.data[TYPES[this.type]];
         }

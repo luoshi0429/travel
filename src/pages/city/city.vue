@@ -77,7 +77,11 @@ export default {
         { name: '成都', cityId: '1348', pvovinceId: '32' },
         { name: '佛山', cityId: '1297', pvovinceId: '29' },
         { name: '深圳', cityId: '1293', pvovinceId: '29' },
-        { name: '杭州', cityId: '1178', pvovinceId: '21' }
+        { name: '杭州', cityId: '1178', pvovinceId: '21' },
+        { name: '西安', cityId: '1401', pvovinceId: '36' },
+        { name: '长沙', cityId: '1278', pvovinceId: '28' },
+        { name: '郑州', cityId: '1243', pvovinceId: '26' },
+        { name: '重庆', cityId: '13', pvovinceId: '13' },
       ],
       letterCities: cities,
       currentLetter: '',
