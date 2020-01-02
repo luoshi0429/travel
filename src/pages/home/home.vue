@@ -120,7 +120,7 @@ export default {
       deep: true,
       immediate: true,
       handler(val) {
-        if (val.cityId) {
+        if (val.pvovinceId) {
           this.requestHomeInfo();
         }
       }

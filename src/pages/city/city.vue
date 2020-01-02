@@ -56,7 +56,14 @@
       <div class="c-search-panel__inner">
         <p class="c-search-panel__title">搜索结果</p>
         <div class="c-search-list">
-          <p class="c-search-row" v-for="(city, index) in searchCities" :key="index">{{ city.name }}</p>
+          <p
+            class="c-search-row"
+            v-for="(city, index) in searchCities"
+            :key="index"
+            @click="tapCity(city)"
+          >
+            {{ city.name }}
+          </p>
         </div>
       </div>
     </div>

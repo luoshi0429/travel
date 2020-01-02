@@ -2,6 +2,13 @@ const cityJSON = `[
   {
       "letter":"A",
       "cities":[
+					{
+						"name":"安徽省",
+						"cityId":"",
+						"province":"安徽",
+						"pvovinceId":"22",
+						"pingying":"anhui"
+					},
           {
               "name":"阿拉善盟",
               "cityId":"1127",
@@ -670,7 +677,14 @@ const cityJSON = `[
               "province":"重庆",
               "pvovinceId":"13",
               "pingying":"fulingqu"
-          },
+					},
+					{
+						"name":"福建省",
+						"cityId":"",
+						"province":"福建",
+						"pvovinceId":"23",
+						"pingying":"fujian"
+					},
           {
               "name":"丰都县",
               "cityId":"1078",
@@ -739,20 +753,41 @@ const cityJSON = `[
   {
       "letter":"G",
       "cities":[
+					{
+						"name":"甘肃省",
+						"cityId":"",
+						"province":"甘肃",
+						"pvovinceId":"37",
+						"pingying":"gansu"
+					},
           {
               "name":"赣州",
               "cityId":"1221",
               "province":"江西",
               "pvovinceId":"24",
               "pingying":"ganzhou"
-          },
+					},
+					{
+						"name":"广东省",
+						"cityId":"",
+						"province":"广东",
+						"pvovinceId":"29",
+						"pingying":"guangdong"
+					},
           {
               "name":"广州",
               "cityId":"1292",
               "province":"广东",
               "pvovinceId":"29",
               "pingying":"guangzhou"
-          },
+					},
+					{
+						"name":"广西",
+						"cityId":"",
+						"province":"广西",
+						"pvovinceId":"30",
+						"pingying":"guangxi"
+					},
           {
               "name":"桂林",
               "cityId":"1315",
@@ -761,12 +796,19 @@ const cityJSON = `[
               "pingying":"guilin"
           },
           {
-              "name":"贵港",
-              "cityId":"1320",
-              "province":"广西",
-              "pvovinceId":"30",
-              "pingying":"guigang"
-          },
+              "name":"贵州省",
+              "cityId":"",
+              "province":"贵州",
+              "pvovinceId":"33",
+              "pingying":"guizhou"
+					},
+					{
+						"name":"贵港",
+						"cityId":"1320",
+						"province":"广西",
+						"pvovinceId":"30",
+						"pingying":"guigang"
+					},
           {
               "name":"广元 ",
               "cityId":"1354",
@@ -808,7 +850,14 @@ const cityJSON = `[
               "province":"青海",
               "pvovinceId":"38",
               "pingying":"guoluozangzu"
-          },
+					},
+					{
+						"name":"国外 ",
+						"cityId":"",
+						"province":"国外",
+						"pvovinceId":"1",
+						"pingying":"guowai"
+					},
           {
               "name":"固原",
               "cityId":"1436",
@@ -862,13 +911,20 @@ const cityJSON = `[
               "province":"上海",
               "pvovinceId":"11",
               "pingying":"hongkouqu"
-          },
+					},
+					{
+						"name":"和平区",
+						"cityId":"1037",
+						"province":"天津",
+						"pvovinceId":"12",
+						"pingying":"hepingqu"
+					},
           {
-              "name":"和平区",
-              "cityId":"1037",
-              "province":"天津",
-              "pvovinceId":"12",
-              "pingying":"hepingqu"
+              "name":"河北省",
+              "cityId":"",
+              "province":"河北",
+              "pvovinceId":"14",
+              "pingying":"hebei"
           },
           {
               "name":"河东区",
@@ -918,7 +974,14 @@ const cityJSON = `[
               "province":"河北",
               "pvovinceId":"14",
               "pingying":"handan"
-          },
+					},
+					{
+						"name":"河南省",
+						"cityId":"",
+						"province":"河南",
+						"pvovinceId":"26",
+						"pingying":"henan"
+					},
           {
               "name":"衡水",
               "cityId":"1105",
@@ -932,7 +995,21 @@ const cityJSON = `[
               "province":"内蒙古 ",
               "pvovinceId":"16",
               "pingying":"huhehaote"
-          },
+					},
+					{
+						"name":"湖北省",
+						"cityId":"",
+						"province":"湖北 ",
+						"pvovinceId":"27",
+						"pingying":"hubei"
+					},
+					{
+						"name":"湖南省",
+						"cityId":"",
+						"province":"湖南 ",
+						"pvovinceId":"28",
+						"pingying":"hunan"
+					},
           {
               "name":"呼伦贝尔",
               "cityId":"1123",
@@ -967,7 +1044,14 @@ const cityJSON = `[
               "province":"黑龙江",
               "pvovinceId":"19",
               "pingying":"heihe"
-          },
+					},
+					{
+						"name":"黑龙江省",
+						"cityId":"",
+						"province":"黑龙江",
+						"pvovinceId":"19",
+						"pingying":"heilongjiang"
+					},
           {
               "name":"淮安",
               "cityId":"1172",
@@ -1107,7 +1191,14 @@ const cityJSON = `[
               "province":"陕西",
               "pvovinceId":"36",
               "pingying":"hanzhong"
-          },
+					},
+					{
+						"name":"海南省",
+						"cityId":"",
+						"province":"海南",
+						"pvovinceId":"31",
+						"pingying":"henan"
+					},
           {
               "name":"海东",
               "cityId":"1426",
@@ -1231,7 +1322,21 @@ const cityJSON = `[
               "province":"重庆",
               "pvovinceId":"13",
               "pingying":"jiangjinshi"
-          },
+					},
+					{
+						"name":"江苏省",
+						"cityId":"",
+						"province":"江苏",
+						"pvovinceId":"20",
+						"pingying":"jiangsu"
+					},
+					{
+						"name":"江西省",
+						"cityId":"",
+						"province":"江西",
+						"pvovinceId":"24",
+						"pingying":"jiangxi"
+					},
           {
               "name":"晋城",
               "cityId":"1110",
@@ -1252,9 +1357,16 @@ const cityJSON = `[
               "province":"辽宁",
               "pvovinceId":"17",
               "pingying":"jinzhou"
-          },
+					},
+					{
+						"name":"吉林省",
+						"cityId":"",
+						"province":"吉林",
+						"pvovinceId":"18",
+						"pingying":"jilin"
+					},
           {
-              "name":"吉林",
+              "name":"吉林市",
               "cityId":"1144",
               "province":"吉林",
               "pvovinceId":"18",
@@ -1500,7 +1612,14 @@ const cityJSON = `[
               "province":"山西",
               "pvovinceId":"15",
               "pingying":"lu:liang"
-          },
+					},
+					{
+						"name":"辽宁省",
+						"cityId":"",
+						"province":"辽宁",
+						"pvovinceId":"17",
+						"pingying":"liaoning"
+					},
           {
               "name":"辽阳",
               "cityId":"1140",
@@ -1797,7 +1916,14 @@ const cityJSON = `[
               "province":"天津",
               "pvovinceId":"12",
               "pingying":"ninghexian"
-          },
+					},
+					{
+						"name":"宁夏",
+						"cityId":"",
+						"province":"宁夏",
+						"pvovinceId":"39",
+						"pingying":"ningxia"
+					},
           {
               "name":"南岸区",
               "cityId":"1062",
@@ -1881,7 +2007,14 @@ const cityJSON = `[
               "province":"四川",
               "pvovinceId":"32",
               "pingying":"neijiang"
-          },
+					},
+					{
+						"name":"内蒙古",
+						"cityId":"",
+						"province":"内蒙古",
+						"pvovinceId":"16",
+						"pingying":"neimenggu"
+				},
           {
               "name":"南充",
               "cityId":"1358",
@@ -2011,6 +2144,13 @@ const cityJSON = `[
   {
       "letter":"Q",
       "cities":[
+					{
+						"name":"青海省",
+						"cityId":"",
+						"province":"青海",
+						"pvovinceId":"38",
+						"pingying":"qinghai"
+					},
           {
               "name":"青浦区",
               "cityId":"1033",
@@ -2175,6 +2315,27 @@ const cityJSON = `[
   {
       "letter":"S",
       "cities":[
+					{
+						"name":"山东省",
+						"cityId":"",
+						"province":"山东",
+						"pvovinceId":"25",
+						"pingying":"shandong"
+					},
+					{
+						"name":"山西省",
+						"cityId":"",
+						"province":"山西",
+						"pvovinceId":"15",
+						"pingying":"shanxi"
+					},
+					{
+						"name":"陕西省",
+						"cityId":"",
+						"province":"陕西",
+						"pvovinceId":"36",
+						"pingying":"shanxi"
+					},
           {
               "name":"石景山区",
               "cityId":"1006",
@@ -2237,7 +2398,14 @@ const cityJSON = `[
               "province":"辽宁",
               "pvovinceId":"17",
               "pingying":"shenyang"
-          },
+					},
+					{
+						"name":"四川省",
+						"cityId":"",
+						"province":"四川",
+						"pvovinceId":"32",
+						"pingying":"sichuang"
+					},
           {
               "name":"四平",
               "cityId":"1145",
@@ -2480,14 +2648,21 @@ const cityJSON = `[
               "province":"河北",
               "pvovinceId":"14",
               "pingying":"tangshan"
-          },
+					},
+					{
+						"name":"台湾",
+						"cityId":"",
+						"province":"台湾",
+						"pvovinceId":"43",
+						"pingying":"taiwan"
+					},
           {
               "name":"太原",
               "cityId":"1106",
               "province":"山西",
               "pvovinceId":"15",
               "pingying":"taiyuan"
-          },
+					},
           {
               "name":"通辽",
               "cityId":"1121",
@@ -2840,7 +3015,14 @@ const cityJSON = `[
               "province":"北京",
               "pvovinceId":"10",
               "pingying":"xichengqu"
-          },
+					},
+					{
+						"name":"西藏",
+						"cityId":"",
+						"province":"西藏",
+						"pvovinceId":"35",
+						"pingying":"xizang"
+					},
           {
               "name":"宣武区",
               "cityId":"1003",
@@ -2875,7 +3057,14 @@ const cityJSON = `[
               "province":"河北",
               "pvovinceId":"14",
               "pingying":"xingtai"
-          },
+					},
+					{
+						"name":"新疆",
+						"cityId":"",
+						"province":"新疆",
+						"pvovinceId":"40",
+						"pingying":"xinjiang"
+					},
           {
               "name":"忻州",
               "cityId":"1114",
@@ -3069,7 +3258,14 @@ const cityJSON = `[
               "province":"重庆",
               "pvovinceId":"13",
               "pingying":"yubeiqu"
-          },
+					},
+					{
+						"name":"云南省",
+						"cityId":"",
+						"province":"云南",
+						"pvovinceId":"34",
+						"pingying":"yunnan"
+					},
           {
               "name":"云阳县",
               "cityId":"1083",
@@ -3333,7 +3529,14 @@ const cityJSON = `[
               "province":"吉林",
               "pvovinceId":"18",
               "pingying":"zhangchun"
-          },
+					},
+					{
+						"name":"浙江省",
+						"cityId":"",
+						"province":"浙江",
+						"pvovinceId":"21",
+						"pingying":"zhejiang"
+					},
           {
               "name":"镇江",
               "cityId":"1175",
