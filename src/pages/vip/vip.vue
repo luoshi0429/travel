@@ -45,7 +45,7 @@
             <span class="price-title">{{ item.text }}</span>
             <p class="discount">{{ item.back_bv }}%</p>
             <p class="discount-text">{{ item.msg }}</p>
-            <p class="price">{{ item.price }}/{{item.month}}月</p>
+            <p class="price">{{ item.price }}/{{item.month | dateUnit}}</p>
           </div>
         </div>
         <div class="gold">
