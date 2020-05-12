@@ -19,17 +19,17 @@ module.exports = {
     proxy: {
       '^/api/': {
         target: 'http://47.92.154.203:666',
-        // target: 'http://shop.npnet66.com',
+        // target: 'http://xf223.com',
         changeOrigin: true,
       },
       // '^/api/shop_order/': {
       //   // target: 'http://47.92.154.203:666',
-      //   target: 'http://shop.npnet66.com',
+      //   target: 'http://xf223.com',
       //   changeOrigin: true,
       // },
       // '^/api/weixin/': {
       //   // target: 'http://47.92.154.203:666',
-      //   target: 'http://shop.npnet66.com',
+      //   target: 'http://xf223.com',
       //   changeOrigin: true,
       // },
     }
