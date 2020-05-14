@@ -4,11 +4,12 @@
       <div class="top">
         <i class="iconfont icon-checked success-icon"></i>
         <span class="text">购买成功</span>
+        <router-link to="/">返回首页</router-link>
       </div>
       <div class="dashed-line"></div>
       <div class="bottom">
         <div class="qrcode-wrapper">
-          <img src="" alt="" />
+          <img src="../../assets/images/qrcode.jpg" alt="" />
         </div>
         <p class="tips">长按识别二维码，关注公众号涅槃课堂，按提示进行返现操作。</p>
       </div>
@@ -55,6 +56,7 @@ export default {
     }
     .text {
       font-size: 16px;
+      margin-bottom: 10px;
     }
   }
   .dashed-line {
@@ -95,7 +97,6 @@ export default {
         display: inline-block;
         width: 130px;
         height: 130px;
-        background: purple;
       }
     }
     .tips {

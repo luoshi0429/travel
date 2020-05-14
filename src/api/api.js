@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = process.env.NODE_ENV === 'development' ? '/api/' : '/shop/api/';
+const baseURL = process.env.NODE_ENV === 'development' ? '/shop/api/' : '/shop/api/';
 const $axios = axios.create({
   baseURL,
   timeout: 8000

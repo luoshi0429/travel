@@ -17,9 +17,9 @@ module.exports = {
     port: 15008,
 
     proxy: {
-      '^/api/': {
-        target: 'http://47.92.154.203:666',
-        // target: 'http://xf223.com',
+      '^/shop/api/': {
+        // target: 'http://47.92.154.203:666',
+        target: 'http://xf223.com',
         changeOrigin: true,
       },
       // '^/api/shop_order/': {

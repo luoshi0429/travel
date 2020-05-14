@@ -182,6 +182,9 @@ export default {
                   this.isPaying = false;
                   if (res.err_msg === 'get_brand_wcpay_request:ok') {
                     this.$toast('支付成功');
+                    this.$router.push({
+                      path: '/order'
+                    });
                   } else {
                     this.$toast('支付失败');
                   }

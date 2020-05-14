@@ -1,15 +1,30 @@
 <template>
   <div class="c-order-item">
-    <img />
+    <!-- <img /> -->
     <div class="c-order-item__content">
       <div class="c-order-item__content__left">
-        <p>商品名称</p>
-        <p class="desc">订单号</p>
+        <p>{{ order.product_name }}</p>
+        <p class="desc">订单号：{{ order.id }}</p>
+        <p class="desc">下单时间：{{ order.gmt_create }}</p>
+        <p class="desc">手机号码：{{ order.customer_mobile }}</p>
+        <p class="price">¥<span>{{ order.price }}</span></p>
       </div>
-      <p class="price">¥<span>12</span></p>
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  props: {
+    order: {
+      type: Object,
+      default() {
+        return {};
+      }
+    }
+  }
+};
+</script>
 
 <style lang="scss" scoped>
 @import '../../styles/common.scss';

@@ -66,7 +66,6 @@
       </div>
       <div class="p-detail-buy-section">
         <div class="p-detail-icon-btn" @click="tapHome"><i class="iconfont icon-shouye"></i><p>首页</p></div>
-        <!-- <div class="p-detail-icon-btn" @click="tapCustomerService"><i class="iconfont icon-kefu"></i><p>客服</p></div> -->
         <button @click="tapBeVip" class="p-detail-vip-btn">会员购买<span>(最多返{{ (currentSku.price ? currentSku.price * 0.07 : 0).toFixed(0) }}元)</span></button>
         <button @click="tapBuy" class="p-detail-buy-btn">立即抢购</button>
       </div>
@@ -136,8 +135,9 @@ export default {
   mounted() {
     this.requestDetail().then(() => {
       this.loading = false;
-    }).catch(() => {
+    }).catch((err) => {
       this.loading = false;
+      this.$toast(err.message);
     });
   },
   methods: {
@@ -156,8 +156,6 @@ export default {
           const skugrup = r.result.skugrups[0] || {};
           this.skugrup = skugrup;
           this.currentSku = skugrup.skus[0];
-        }).catch(err => {
-          console.error(err);
         });
     },
     getCityById(cityId) {

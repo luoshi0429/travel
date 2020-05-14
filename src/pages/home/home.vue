@@ -2,7 +2,12 @@
   <div class="p-home" :class="{ fixed: showSearch }">
     <div class="c-home-nav">
       <div class="c-home-vip" @click="tapBeVip">
-        <i class="iconfont icon-vip1"></i> 立即成为会员
+        <template v-if="!!userInfo.vip">
+          <i class="icon iconfont icon-vip1"></i>{{ userInfo.vip_type === 'hj' ? '黄金会员' : '钻石会员' }}
+        </template>
+        <template v-else>
+          <i class="iconfont icon-vip1"></i> 立即成为会员
+        </template>
       </div>
       <div class="c-home-nav__right">
         <router-link to="/search" class="c-home-nav__search"><i class="c-icon iconfont icon-sousuo1"></i>搜索</router-link>
@@ -111,7 +116,8 @@ export default {
 
   computed: {
     ...mapState({
-      selectedAddress: state => state.user.selectedAddress
+      selectedAddress: state => state.user.selectedAddress,
+      userInfo: state => state.user.info || {}
     })
   },
 
