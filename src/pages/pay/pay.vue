@@ -179,14 +179,17 @@ export default {
                   "paySign": r.sign
                 }, (res) => {
                   console.info('getBrandWCPayRequest: ', res);
-                  this.isPaying = false;
                   if (res.err_msg === 'get_brand_wcpay_request:ok') {
                     this.$toast('支付成功');
-                    this.$router.push({
-                      path: '/order'
-                    });
+                    setTimeout(() => {
+                      this.$router.push({
+                        path: '/order'
+                      });
+                      this.isPaying = false;
+                    }, 1000);
                   } else {
                     this.$toast('支付失败');
+                    this.isPaying = false;
                   }
                 });
               };

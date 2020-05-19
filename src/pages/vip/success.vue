@@ -11,7 +11,7 @@
         <div class="qrcode-wrapper">
           <img src="../../assets/images/qrcode.jpg" alt="" />
         </div>
-        <p class="tips">长按识别二维码，关注公众号涅槃课堂，按提示进行返现操作。</p>
+        <p class="tips">长按识别二维码，关注公众号旅合算，按提示进行返现操作。</p>
       </div>
     </div>
   </div>
